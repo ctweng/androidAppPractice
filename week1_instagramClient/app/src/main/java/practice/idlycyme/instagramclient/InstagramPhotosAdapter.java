@@ -25,10 +25,17 @@ public class InstagramPhotosAdapter extends ArrayAdapter<InstagramPhoto> {
         }
         TextView tvCaption = (TextView)convertView.findViewById(R.id.tvCaption);
         ImageView ivPhoto = (ImageView)convertView.findViewById(R.id.ivPhoto);
+        TextView tvLikeCount = (TextView)convertView.findViewById(R.id.tvLikeCount);
+        TextView tvUsername = (TextView)convertView.findViewById(R.id.tvUsername);
+        ImageView ivUser = (ImageView)convertView.findViewById(R.id.ivUser);
+
         tvCaption.setText(photo.caption);
+        tvLikeCount.setText(Integer.toString(photo.likesCount));
+        tvUsername.setText(photo.user.username);
         ivPhoto.setImageResource(0);
         Picasso.with(getContext()).load(photo.imageUrl).into(ivPhoto);
-
+        ivUser.setImageResource(0);
+        Picasso.with(getContext()).load(photo.user.profilePhotoUrl).into(ivUser);
         return  convertView;
     }
 }
