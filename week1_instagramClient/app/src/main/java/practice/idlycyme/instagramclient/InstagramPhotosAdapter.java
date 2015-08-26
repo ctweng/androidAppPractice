@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
+import practice.idlycyme.instagramclient.CircleTransform;
 
 import java.util.List;
 
@@ -28,6 +29,7 @@ public class InstagramPhotosAdapter extends ArrayAdapter<InstagramPhoto> {
         TextView tvLikeCount = (TextView)convertView.findViewById(R.id.tvLikeCount);
         TextView tvUsername = (TextView)convertView.findViewById(R.id.tvUsername);
         ImageView ivUser = (ImageView)convertView.findViewById(R.id.ivUser);
+        TextView tvCreatedTime = (TextView)convertView.findViewById(R.id.tvCreatedTime);
 
         tvCaption.setText(photo.caption);
         tvLikeCount.setText(Integer.toString(photo.likesCount));
@@ -35,7 +37,8 @@ public class InstagramPhotosAdapter extends ArrayAdapter<InstagramPhoto> {
         ivPhoto.setImageResource(0);
         Picasso.with(getContext()).load(photo.imageUrl).into(ivPhoto);
         ivUser.setImageResource(0);
-        Picasso.with(getContext()).load(photo.user.profilePhotoUrl).into(ivUser);
+        Picasso.with(getContext()).load(photo.user.profilePhotoUrl).transform(new CircleTransform()).into(ivUser);
+        tvCreatedTime.setText(photo.getCreatedAtRelativeTimeSpan());
         return  convertView;
     }
 }
