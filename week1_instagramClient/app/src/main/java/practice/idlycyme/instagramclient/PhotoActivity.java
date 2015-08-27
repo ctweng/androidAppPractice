@@ -1,6 +1,8 @@
 package practice.idlycyme.instagramclient;
 
 import android.support.v7.app.AppCompatActivity;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -20,6 +22,8 @@ import java.util.ArrayList;
 public class PhotoActivity extends AppCompatActivity {
     private ArrayList<InstagramPhoto> photos;
     private InstagramPhotosAdapter aPhotos;
+    private SwipeRefreshLayout swipeContainer;
+
     public static final String CLIENT_ID = "5e4bb8b442144e2cad975512543ecdb8";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +34,21 @@ public class PhotoActivity extends AppCompatActivity {
         ListView lvPhotos = (ListView)findViewById(R.id.lvPhotos);
         lvPhotos.setAdapter(aPhotos);
         fetchPopularPhotos();
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        // Setup refresh listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                fetchPopularPhotos();
+            }
+        });
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+        // first load
+
     }
 
     public void fetchPopularPhotos() {
@@ -53,6 +72,8 @@ public class PhotoActivity extends AppCompatActivity {
                         photo.imageHeight = photoJSON.getJSONObject("images").getJSONObject("standard_resolution").getInt("height");
                         photo.likesCount = photoJSON.getJSONObject("likes").getInt("count");
                         photo.user = new InstagramUser(photoJSON.getJSONObject("user"));
+                        photo.createdAtEpochSec = photoJSON.getLong("created_time");
+                        photo.setComments(photoJSON.getJSONObject("comments").getJSONArray("data"));
                         photos.add(photo);
                     }
                 } catch (JSONException e) {
@@ -60,6 +81,7 @@ public class PhotoActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 aPhotos.notifyDataSetChanged();
+                swipeContainer.setRefreshing(false);
             }
 
             @Override
