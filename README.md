@@ -1,7 +1,7 @@
 # androidAppPractice
 parctice of android app dev using codepath assignments
 
-# Project 1 - *Name of App Here*
+# Project 1 - *Week1 Simple Instagram Pop Photos Viewer*
 
 **Name of your app** is an android app that allows a user to check out popular photos from Instagram. The app utilizes Instagram API to display images and basic image information to the user.
 
@@ -20,15 +20,15 @@ The following **optional** features are implemented:
 
 * [v] User can **pull-to-refresh** popular stream to get the latest popular photos
 * [v] Show latest comments for each photo
-* [ ] Display each photo with the same style and proportions as the real Instagram
+* [v] Display each photo with the same style and proportions as the real Instagram
 * [v] Display each user profile image using a RoundedImageViewDisplay each user profile image using a [RoundedImageView](https://github.com/vinc3m1/RoundedImageView)
 * [v] Display a nice default placeholder graphic for each image during loading
-* [ ] Improved the user interface through styling and coloring
+* [v] Improved the user interface through styling and coloring
 
 The following **bonus** features are implemented:
 
 * [v] Show last 2 comments for each photo
-* [ ] Allow user to view all comments for an image within a separate activity or dialog fragment
+* [v] Allow user to view all comments for an image within a separate activity or dialog fragment
 * [ ] Allow video posts to be played in full-screen using the VideoView
 
 The following **additional** features are implemented:
