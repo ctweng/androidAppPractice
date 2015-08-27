@@ -46,6 +46,7 @@ GIF created with [LiceCap](http://www.cockos.com/licecap/).
 ## Notes
 
 Describe any challenges encountered while building the app.
+[CodePath Link for This Assignment](http://courses.codepath.com/courses/intro_to_android/week/1#!assignment)
 
 ## Open-source libraries used
 
