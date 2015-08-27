@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minHeight="?android:attr/listPreferredItemHeight"
     android:layout_width="match_parent" android:layout_height="match_parent"
     android:id="@+id/item_photo">
 
@@ -9,52 +10,116 @@
         android:id="@+id/ivPhoto"
         android:adjustViewBounds="true"
         android:minHeight="50dp"
+        android:longClickable="false"
+        android:src="@drawable/pi_image"
         android:layout_below="@+id/ivUser"
-        android:layout_alignRight="@+id/tvLikeCount"
-        android:layout_alignEnd="@+id/tvLikeCount"
-        android:longClickable="false" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="New Text"
         android:id="@+id/tvCaption"
-        android:layout_below="@+id/ivPhoto"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:ellipsize="end"
         android:maxLines="3"
-        android:minHeight="30sp" />
+        android:minHeight="30sp"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/ivLike"
+        android:layout_alignLeft="@+id/ivLike"
+        android:layout_alignStart="@+id/ivUser"
+        android:layout_marginRight="10dp"
+        android:textSize="@dimen/abc_text_size_body_1_material" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="New Text"
         android:id="@+id/tvLikeCount"
-        android:layout_alignTop="@+id/tvCaption"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:minLines="1" />
+        android:minLines="1"
+        android:textColor="#2a0c51"
+        android:textStyle="bold"
+        android:textSize="@dimen/abc_text_size_menu_material"
+        android:layout_above="@+id/tvCaption"
+        android:layout_toEndOf="@+id/ivUser"
+        android:layout_toRightOf="@+id/ivLike" />
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/ivUser"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:adjustViewBounds="false"
+        android:adjustViewBounds="true"
         android:maxWidth="50dp"
         android:minHeight="30dp"
         android:maxHeight="50dp"
-        android:minWidth="30dp" />
+        android:minWidth="30dp"
+        android:src="@drawable/pi_profile"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:longClickable="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="New Text"
         android:id="@+id/tvUsername"
-        android:layout_alignBottom="@+id/ivUser"
         android:layout_toRightOf="@+id/ivUser"
-        android:layout_toEndOf="@+id/ivUser" />
+        android:layout_toEndOf="@+id/ivUser"
+        android:textSize="@dimen/abc_text_size_large_material"
+        android:textStyle="bold"
+        android:textColor="#2a0c51"
+        android:layout_marginTop="20dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Text"
+        android:id="@+id/tvCreatedTime"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/tvCaption"
+        android:id="@+id/llComments"
+        android:layout_below="@+id/tvCaption"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"></LinearLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ivLike"
+        android:src="@drawable/pi_like"
+        android:maxHeight="20dp"
+        android:maxWidth="20dp"
+        android:minHeight="20dp"
+        android:minWidth="20dp"
+        android:nestedScrollingEnabled="false"
+        android:adjustViewBounds="true"
+        android:layout_marginLeft="20dp"
+        android:layout_below="@+id/ivPhoto" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ivClock"
+        android:maxHeight="15dp"
+        android:maxWidth="15dp"
+        android:src="@drawable/pi_clock"
+        android:adjustViewBounds="true"
+        android:layout_alignTop="@+id/tvCreatedTime"
+        android:layout_toLeftOf="@+id/tvCreatedTime"
+        android:layout_toStartOf="@+id/tvCreatedTime"
+        android:layout_marginRight="5dp" />
 </RelativeLayout>
