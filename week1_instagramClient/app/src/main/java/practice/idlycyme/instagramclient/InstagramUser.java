@@ -3,10 +3,12 @@ package practice.idlycyme.instagramclient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
+
 /**
  * Created by cyme on 8/25/15.
  */
-public class InstagramUser {
+public class InstagramUser implements Serializable {
     public String username;
     public String profilePhotoUrl;
     public String id;

@@ -1,5 +1,6 @@
 package practice.idlycyme.instagramclient;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
@@ -7,6 +8,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -47,6 +50,18 @@ public class PhotoActivity extends AppCompatActivity {
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
+        lvPhotos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+                InstagramPhoto photo = photos.get(position);
+                Intent photo2detail = new Intent();
+                photo2detail.setClass(getBaseContext(), PhotoDetailActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("data", photo);
+                photo2detail.putExtras(bundle);
+                startActivity(photo2detail);
+            }
+        });
         // first load
 
     }
@@ -59,6 +74,7 @@ public class PhotoActivity extends AppCompatActivity {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 //super.onSuccess(statusCode, headers, response);
                 JSONArray photoJSONs = null;
+                photos.clear();
                 try {
                     photoJSONs = response.getJSONArray("data");
                     Log.i("DEBUG_JSON", photoJSONs.toString());
@@ -67,7 +83,9 @@ public class PhotoActivity extends AppCompatActivity {
                         Log.i("DEBUG_JSON2", photoJSON.toString());
                         InstagramPhoto photo = new InstagramPhoto();
                         photo.username = photoJSON.getJSONObject("user").getString("username");
-                        photo.caption = photoJSON.getJSONObject("caption").getString("text");
+                        if (photoJSON.has("caption") && !photoJSON.isNull("caption")) {
+                            photo.caption = photoJSON.getJSONObject("caption").getString("text");
+                        }
                         photo.imageUrl = photoJSON.getJSONObject("images").getJSONObject("standard_resolution").getString("url");
                         photo.imageHeight = photoJSON.getJSONObject("images").getJSONObject("standard_resolution").getInt("height");
                         photo.likesCount = photoJSON.getJSONObject("likes").getInt("count");

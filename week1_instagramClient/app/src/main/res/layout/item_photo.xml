@@ -42,7 +42,8 @@
         android:textSize="@dimen/abc_text_size_menu_material"
         android:layout_above="@+id/tvCaption"
         android:layout_toEndOf="@+id/ivUser"
-        android:layout_toRightOf="@+id/ivLike" />
+        android:layout_toRightOf="@+id/ivLike"
+        android:layout_marginLeft="5dp" />
 
     <ImageView
         android:layout_width="wrap_content"

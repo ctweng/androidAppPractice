@@ -30,7 +30,7 @@ public class InstagramDetailAdapter extends ArrayAdapter<InstagramComment> {
     public View getView(int position, View convertView, ViewGroup parent) {
         if (position == 0) {
             // Show photo detail as PhotoActivity
-            if (convertView == null) {
+            if (convertView == null || convertView.findViewById(R.id.tvCaption) == null) {
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_photo, parent, false);
             }
             TextView tvCaption = (TextView)convertView.findViewById(R.id.tvCaption);
@@ -39,7 +39,6 @@ public class InstagramDetailAdapter extends ArrayAdapter<InstagramComment> {
             TextView tvUsername = (TextView)convertView.findViewById(R.id.tvUsername);
             ImageView ivUser = (ImageView)convertView.findViewById(R.id.ivUser);
             TextView tvCreatedTime = (TextView)convertView.findViewById(R.id.tvCreatedTime);
-
             tvCaption.setText(photo.caption);
             tvLikeCount.setText(Integer.toString(photo.likesCount));
             tvUsername.setText(photo.user.username);
@@ -50,15 +49,17 @@ public class InstagramDetailAdapter extends ArrayAdapter<InstagramComment> {
             tvCreatedTime.setText(photo.getCreatedAtRelativeTimeSpan());
         } else {
             // Show all comments
-            if (convertView == null) {
+            if (convertView == null || convertView.findViewById(R.id.tvCommentUsername) == null) {
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_comment, parent, false);
             }
             InstagramComment comment = getItem(position);
             TextView tvCommentUsername = (TextView)convertView.findViewById(R.id.tvCommentUsername);
             TextView tvCommentText = (TextView)convertView.findViewById(R.id.tvCommentText);
+            TextView tvCommentCreatedAt = (TextView)convertView.findViewById(R.id.tvCommentCreatedAt);
             ImageView ivCommentUser = (ImageView)convertView.findViewById(R.id.ivCommentUser);
             tvCommentUsername.setText(comment.user.username);
             tvCommentText.setText(comment.text);
+            tvCommentCreatedAt.setText(comment.getCreatedAtRelativeTimeSpan());
             Picasso.with(getContext()).load(comment.user.profilePhotoUrl).placeholder(R.drawable.pi_profile).transform(new CircleTransform()).into(ivCommentUser);
         }
         return  convertView;
