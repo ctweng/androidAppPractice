@@ -36,7 +36,7 @@ public class InstagramPhotosAdapter extends ArrayAdapter<InstagramPhoto> {
         tvLikeCount.setText(Integer.toString(photo.likesCount)+" likes");
         tvUsername.setText(photo.user.username);
         ivPhoto.setImageResource(0);
-        Picasso.with(getContext()).load(photo.imageUrl).into(ivPhoto);
+        Picasso.with(getContext()).load(photo.imageUrl).placeholder(R.drawable.pi_load).into(ivPhoto);
         ivUser.setImageResource(0);
         Picasso.with(getContext()).load(photo.user.profilePhotoUrl).placeholder(R.drawable.pi_profile).transform(new CircleTransform()).into(ivUser);
         tvCreatedTime.setText(photo.getCreatedAtRelativeTimeSpan());
