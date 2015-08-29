@@ -1,11 +1,13 @@
 package idlycyme.practice.gridimagesearch.activities;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Toast;
@@ -38,15 +40,25 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         setupViews();
-        this.apiClient = new AsyncHttpClient();
-        this.imageResults = new ArrayList<ImageResult>();
-        this.aImageResults = new ImageResultsAdapter(this, this.imageResults);
+        apiClient = new AsyncHttpClient();
+        imageResults = new ArrayList<ImageResult>();
+        aImageResults = new ImageResultsAdapter(this, this.imageResults);
+        gvResults.setAdapter(this.aImageResults);
+;
     }
 
     private void setupViews() {
         etQuery = (EditText)findViewById(R.id.etQuery);
         gvResults = (GridView)findViewById(R.id.gvResults);
-        gvResults.setAdapter(this.aImageResults);
+        gvResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent result2detail = new Intent(SearchActivity.this, ImageDisplayActivity.class);
+                ImageResult result = imageResults.get(position);
+                result2detail.putExtra("result", result);
+                startActivity(result2detail);
+            }
+        });
     }
 
     @Override
@@ -75,7 +87,7 @@ public class SearchActivity extends AppCompatActivity {
         String query = this.etQuery.getText().toString();
         String searchUrl = "http://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=" + query + "&rsz=8";
         Log.d("url is ", searchUrl);
-        this.apiClient.get(searchUrl, null, new JsonHttpResponseHandler() {
+        apiClient.get(searchUrl, null, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 JSONArray imageResultsJson = null;
@@ -83,11 +95,11 @@ public class SearchActivity extends AppCompatActivity {
                     Log.i("aaaa", response.toString());
                     imageResultsJson = response.getJSONObject("responseData").getJSONArray("results");
                     imageResults.clear();
-                    /*
+
                     imageResults.addAll(ImageResult.fromJSONArray(imageResultsJson));
                     aImageResults.notifyDataSetChanged();
-                    */
-                    aImageResults.addAll(ImageResult.fromJSONArray(imageResultsJson));
+
+                    //aImageResults.addAll(ImageResult.fromJSONArray(imageResultsJson));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
