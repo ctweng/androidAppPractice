@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -30,15 +31,25 @@ import java.util.ArrayList;
 import idlycyme.practice.gridimagesearch.R;
 import idlycyme.practice.gridimagesearch.adapters.ImageResultsAdapter;
 import idlycyme.practice.gridimagesearch.libraries.EndlessScrollListener;
+import idlycyme.practice.gridimagesearch.libraries.SearchFilterDialog;
+import idlycyme.practice.gridimagesearch.libraries.SearchFilterDialog.SearchFilterDialogListener;
 import idlycyme.practice.gridimagesearch.models.ImageResult;
 
-public class SearchActivity extends AppCompatActivity {
+import static idlycyme.practice.gridimagesearch.R.string.limit_search_filter_param;
+import static idlycyme.practice.gridimagesearch.R.string.offset_search_filter_param;
+import static idlycyme.practice.gridimagesearch.R.string.query_search_filter_param;
+
+public class SearchActivity extends AppCompatActivity implements SearchFilterDialogListener {
     private EditText etQuery;
     private GridView gvResults;
     private AsyncHttpClient apiClient;
     private ArrayList<ImageResult> imageResults;
     private ImageResultsAdapter aImageResults;
     private String nextSearchText;
+    private String searchFilterSite = "";
+    private int searchFilterType = 0;
+    private int searchFilterColor = 0;
+    private int searchFilterSize = 0;
     private int offestIncrement = 8;
     private int maxSearchOffset;
     private static final String searchURL = "http://ajax.googleapis.com/ajax/services/search/images?v=1.0";
@@ -55,7 +66,7 @@ public class SearchActivity extends AppCompatActivity {
         gvResults.setOnScrollListener(new EndlessScrollListener() {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
-                fetchSearchResults(nextSearchText, (page-1)*offestIncrement);
+                fetchSearchResults(nextSearchText, (page - 1) * offestIncrement);
             }
         });
 ;
@@ -106,7 +117,7 @@ public class SearchActivity extends AppCompatActivity {
             Toast.makeText(this, "Network unavailable, try later!", Toast.LENGTH_LONG).show();
         }
 
-        if (!searchText.equals(nextSearchText)) {
+        if (!searchText.equals(nextSearchText) || nextSearchOffset == 0) {
             resetSearchParams();
             aImageResults.clear();
             nextSearchText = searchText;
@@ -116,11 +127,7 @@ public class SearchActivity extends AppCompatActivity {
             return;
         }
 
-        RequestParams params = new RequestParams();
-        params.put("q", nextSearchText);
-        params.put("rsz", offestIncrement);
-        params.put("start", nextSearchOffset);
-        apiClient.get(searchURL, params, new JsonHttpResponseHandler() {
+        apiClient.get(searchURL, buildRequestParams(nextSearchOffset), new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 JSONArray imageResultsJson = null;
@@ -166,5 +173,47 @@ public class SearchActivity extends AppCompatActivity {
     private void resetSearchParams() {
         nextSearchText = "";
         maxSearchOffset = -1;
+    }
+
+    public boolean onSetting(MenuItem item) {
+        Log.i("in setting", "-------------");
+        showFilterSettingDialog();
+        return true;
+    }
+
+    private void showFilterSettingDialog() {
+        FragmentManager fm = getSupportFragmentManager();
+        SearchFilterDialog dialog = SearchFilterDialog.newInstance(getString(R.string.search_filter_dialog_title), searchFilterSite, searchFilterSize, searchFilterType, searchFilterColor);
+        dialog.show(fm, "fragment_edit_name");
+    }
+
+    private RequestParams buildRequestParams(int nextSearchOffset) {
+        RequestParams params = new RequestParams();
+        params.put(getString(query_search_filter_param), nextSearchText);
+        params.put(getString(offset_search_filter_param), nextSearchOffset);
+        params.put(getString(limit_search_filter_param), offestIncrement);
+        if (!searchFilterSite.equals("")) {
+            params.put("as_sitesearch", searchFilterSite);
+        }
+        if (searchFilterSize != 0) {
+            params.put("imgsz", getResources().getStringArray(R.array.filter_size_array)[searchFilterSize]);
+        }
+        if (searchFilterColor != 0) {
+            params.put("imgcolor", getResources().getStringArray(R.array.filter_color_array)[searchFilterColor]);
+        }
+        if (searchFilterType != 0) {
+            params.put("imgtype", getResources().getStringArray(R.array.filter_type_array)[searchFilterType]);
+        }
+        Log.i("params", params.toString());
+        return params;
+    }
+
+    @Override
+    public void onFinishEditDialog(String site, int size, int type, int color) {
+        searchFilterSite = site;
+        searchFilterType = type;
+        searchFilterSize = size;
+        searchFilterColor = color;
+        fetchSearchResults(nextSearchText, 0);
     }
 }

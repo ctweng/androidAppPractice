@@ -1,0 +1,78 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/type_filter_label"
+            android:id="@+id/tvFitlerType"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/color_filter_type"
+            android:id="@+id/tvFilterColor"
+        android:layout_below="@+id/tvFitlerType"
+        android:layout_alignLeft="@+id/tvFitlerType" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/site_filter_label"
+        android:id="@+id/tvFilterSite"
+        android:layout_alignLeft="@+id/tvFitlerType"
+        android:layout_below="@+id/tvSize" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/size_filter_label"
+        android:id="@+id/tvSize"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/tvFilterColor"
+        android:layout_alignLeft="@+id/tvFitlerType" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/etSite"
+        android:layout_below="@+id/tvFilterSite"
+        android:layout_toRightOf="@+id/tvSize"
+        android:layout_toEndOf="@+id/tvSize" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/spFilterColor"
+        android:entries="@array/filter_color_array"
+        android:layout_toRightOf="@+id/tvFilterColor"
+        android:layout_toEndOf="@+id/etSite"
+        android:layout_alignTop="@+id/tvFilterColor" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/spFilterType"
+        android:entries="@array/filter_type_array"
+        android:layout_alignParentTop="false"
+        android:layout_toRightOf="@+id/tvFilterColor"
+        android:layout_toEndOf="@+id/tvFilterColor"
+        android:layout_alignTop="@+id/tvFitlerType" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/spFilterSize"
+        android:entries="@array/filter_size_array"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_toRightOf="@+id/tvSize"
+        android:layout_alignTop="@+id/tvSize" />
+
+</RelativeLayout>

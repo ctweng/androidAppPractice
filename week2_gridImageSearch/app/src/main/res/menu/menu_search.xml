@@ -3,4 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools" tools:context=".SearchActivity">
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/action_filter"
+        android:title="Search Filters"
+        android:icon="@drawable/ic_action_filters"
+        app:showAsAction="always"
+        android:onClick="onSetting" />
 </menu>

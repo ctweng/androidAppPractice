@@ -7,4 +7,17 @@
     <string name="search_label">Search</string>
     <string name="image_title_label">Image Title</string>
     <string name="title_activity_image_display">Full Image</string>
+    <string name="type_search_filter_param">imgtype</string>
+    <string name="size_search_filter_param">imgsz</string>
+    <string name="site_search_filter_param">as_sitesearch</string>
+    <string name="color_search_filter_param">imgcolor</string>
+    <string name="query_search_filter_param">q</string>
+    <string name="offset_search_filter_param">start</string>
+    <string name="limit_search_filter_param">rsz</string>
+    <string name="search_filter_dialog_title">Search Filters</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="size_filter_label">Size</string>
+    <string name="type_filter_label">Type</string>
+    <string name="color_filter_type">Color</string>
+    <string name="site_filter_label">Site</string>
 </resources>
