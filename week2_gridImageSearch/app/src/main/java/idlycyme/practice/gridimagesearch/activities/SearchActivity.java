@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import com.etsy.android.grid.StaggeredGridView;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -42,7 +43,7 @@ import static idlycyme.practice.gridimagesearch.R.string.offset_search_filter_pa
 import static idlycyme.practice.gridimagesearch.R.string.query_search_filter_param;
 
 public class SearchActivity extends AppCompatActivity implements SearchFilterDialogListener {
-    private GridView gvResults;
+    private StaggeredGridView gvResults;
     private AsyncHttpClient apiClient;
     private ArrayList<ImageResult> imageResults;
     private ImageResultsAdapter aImageResults;
@@ -74,7 +75,7 @@ public class SearchActivity extends AppCompatActivity implements SearchFilterDia
     }
 
     private void setupViews() {
-        gvResults = (GridView)findViewById(R.id.gvResults);
+        gvResults = (StaggeredGridView)findViewById(R.id.gvResults);
         gvResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -125,10 +126,6 @@ public class SearchActivity extends AppCompatActivity implements SearchFilterDia
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
 
         return super.onOptionsItemSelected(item);
     }

@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#dfdede"
+    android:minHeight="75dp"
+    android:minWidth="75dp"
+    android:id="@+id/item_image_result">
 
     <ImageView
-        android:layout_width="75dp"
-        android:layout_height="75dp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/ivImage"
         android:contentDescription="Image Result"
         android:adjustViewBounds="true"
-        android:scaleType="fitXY" />
+        android:scaleType="fitXY"
+        android:minHeight="75dp"
+        android:layout_margin="1dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -17,5 +23,6 @@
         android:text="@string/image_title_label"
         android:maxLines="2"
         android:ellipsize="end"
-        android:id="@+id/tvTitle" />
+        android:id="@+id/tvTitle"
+        android:layout_margin="2dp" />
 </LinearLayout>
