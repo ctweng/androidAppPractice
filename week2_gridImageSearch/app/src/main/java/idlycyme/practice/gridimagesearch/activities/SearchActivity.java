@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,7 +42,6 @@ import static idlycyme.practice.gridimagesearch.R.string.offset_search_filter_pa
 import static idlycyme.practice.gridimagesearch.R.string.query_search_filter_param;
 
 public class SearchActivity extends AppCompatActivity implements SearchFilterDialogListener {
-    private EditText etQuery;
     private GridView gvResults;
     private AsyncHttpClient apiClient;
     private ArrayList<ImageResult> imageResults;
@@ -73,7 +74,6 @@ public class SearchActivity extends AppCompatActivity implements SearchFilterDia
     }
 
     private void setupViews() {
-        etQuery = (EditText)findViewById(R.id.etQuery);
         gvResults = (GridView)findViewById(R.id.gvResults);
         gvResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -94,6 +94,27 @@ public class SearchActivity extends AppCompatActivity implements SearchFilterDia
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_search, menu);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setIconifiedByDefault(false);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                // perform query here
+                if (query.equals("")) {
+                    Toast.makeText(getBaseContext(), "Please enter something to search", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+                fetchSearchResults(query, 0);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
         return true;
     }
 
@@ -134,7 +155,7 @@ public class SearchActivity extends AppCompatActivity implements SearchFilterDia
                 try {
                     Log.i("cursor", response.getJSONObject("responseData").getJSONObject("cursor").toString());
                     JSONArray pages = response.getJSONObject("responseData").getJSONObject("cursor").getJSONArray("pages");
-                    maxSearchOffset = Integer.valueOf(pages.getJSONObject(pages.length()-1).getString("start"));
+                    maxSearchOffset = Integer.valueOf(pages.getJSONObject(pages.length() - 1).getString("start"));
                     imageResultsJson = response.getJSONObject("responseData").getJSONArray("results");
                     imageResults.addAll(ImageResult.fromJSONArray(imageResultsJson));
                     aImageResults.notifyDataSetChanged();
@@ -145,6 +166,7 @@ public class SearchActivity extends AppCompatActivity implements SearchFilterDia
                 }
 
             }
+
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 super.onFailure(statusCode, headers, responseString, throwable);
@@ -152,15 +174,6 @@ public class SearchActivity extends AppCompatActivity implements SearchFilterDia
                 Log.d("client failure", responseString + "           " + String.valueOf(statusCode) + "          " + headers.toString());
             }
         });
-    }
-
-    public void onImageSearch(View v) {
-        String query = this.etQuery.getText().toString();
-        if (query.equals("")) {
-            Toast.makeText(this, "Please enter something to search", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        fetchSearchResults(query, 0);
     }
 
     private Boolean isNetworkAvailable() {
