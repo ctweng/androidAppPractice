@@ -34,6 +34,9 @@ public class ImageDisplayActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_display);
         //getSupportActionBar().hide();
+    }
+
+    private void fetchImage(){
         ImageResult result = (ImageResult)getIntent().getSerializableExtra("result");
         String url = result.fullUrl;
         ImageView ivFull = (ImageView)findViewById(R.id.ivImageFull);
@@ -49,7 +52,6 @@ public class ImageDisplayActivity extends AppCompatActivity {
                 Toast.makeText(getBaseContext(), "Loading image failed!", Toast.LENGTH_SHORT).show();
             }
         });
-
     }
 
     @Override
@@ -61,6 +63,8 @@ public class ImageDisplayActivity extends AppCompatActivity {
         // Fetch reference to the share action provider
         miShareAction = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
         // Return true to display menu
+        // Get image after menu has been created, or it may call setupShareIntent too early to get null pointer exception
+        fetchImage();
         return true;
     }
 

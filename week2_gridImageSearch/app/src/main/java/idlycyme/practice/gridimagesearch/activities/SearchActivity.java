@@ -47,7 +47,7 @@ public class SearchActivity extends AppCompatActivity implements SearchFilterDia
     private AsyncHttpClient apiClient;
     private ArrayList<ImageResult> imageResults;
     private ImageResultsAdapter aImageResults;
-    private String nextSearchText;
+    private String nextSearchText = "";
     private String searchFilterSite = "";
     private int searchFilterType = 0;
     private int searchFilterColor = 0;
