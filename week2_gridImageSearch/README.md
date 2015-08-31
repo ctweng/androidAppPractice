@@ -30,7 +30,7 @@ The following **optional** features are implemented:
 The following **bonus** features are implemented:
 
 * [v] Used the [StaggeredGridView](https://github.com/f-barth/AndroidStaggeredGrid) to display improve the grid of image results
-* [ ] User can [zoom or pan images](https://github.com/MikeOrtiz/TouchImageView) displayed in full-screen detail view
+* [v] User can [zoom or pan images](https://github.com/MikeOrtiz/TouchImageView) displayed in full-screen detail view
 
 The following **additional** features are implemented:
 

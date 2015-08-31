@@ -3,7 +3,7 @@
     android:layout_height="match_parent"
     tools:context="idlycyme.practice.gridimagesearch.activities.ImageDisplayActivity">
 
-      <ImageView
+      <idlycyme.practice.gridimagesearch.libraries.TouchImageView
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:id="@+id/ivImageFull"
