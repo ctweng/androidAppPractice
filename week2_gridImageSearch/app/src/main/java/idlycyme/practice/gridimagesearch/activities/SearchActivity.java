@@ -110,10 +110,12 @@ public class SearchActivity extends AppCompatActivity implements SearchFilterDia
                     Toast.makeText(getBaseContext(), "Please enter something to search", Toast.LENGTH_SHORT).show();
                     return true;
                 }
+                Log.i("new query", query);
+                Log.i("onQtwice", String.valueOf(onQueryTextSubmitTwice));
                 if (onQueryTextSubmitTwice) {
-                    onQueryTextSubmitTwice = !onQueryTextSubmitTwice;
                     fetchSearchResults(query, 0);
                 }
+                onQueryTextSubmitTwice = !onQueryTextSubmitTwice;
                 return true;
             }
 
