@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -54,6 +55,7 @@ public class SearchActivity extends AppCompatActivity implements SearchFilterDia
     private int searchFilterSize = 0;
     private int offestIncrement = 8;
     private int maxSearchOffset;
+    private static boolean onQueryTextSubmitTwice = true;
     private static final String searchURL = "http://ajax.googleapis.com/ajax/services/search/images?v=1.0";
 
     @Override
@@ -68,7 +70,9 @@ public class SearchActivity extends AppCompatActivity implements SearchFilterDia
         gvResults.setOnScrollListener(new EndlessScrollListener() {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
-                fetchSearchResults(nextSearchText, (page - 1) * offestIncrement);
+                Log.i("page is ", String.valueOf(page));
+                Log.i("total item count is ", String.valueOf(totalItemsCount));
+                fetchSearchResults(nextSearchText, page * offestIncrement);
             }
         });
 ;
@@ -106,7 +110,10 @@ public class SearchActivity extends AppCompatActivity implements SearchFilterDia
                     Toast.makeText(getBaseContext(), "Please enter something to search", Toast.LENGTH_SHORT).show();
                     return true;
                 }
-                fetchSearchResults(query, 0);
+                if (onQueryTextSubmitTwice) {
+                    onQueryTextSubmitTwice = !onQueryTextSubmitTwice;
+                    fetchSearchResults(query, 0);
+                }
                 return true;
             }
 
@@ -130,11 +137,11 @@ public class SearchActivity extends AppCompatActivity implements SearchFilterDia
         return super.onOptionsItemSelected(item);
     }
 
-    private void fetchSearchResults(String searchText, int nextSearchOffset) {
+    private void fetchSearchResults(String searchText, final int nextSearchOffset) {
         if (!isNetworkAvailable()) {
             Toast.makeText(this, "Network unavailable, try later!", Toast.LENGTH_LONG).show();
         }
-
+        Log.i("====== search is ", searchText + "  " + String.valueOf(nextSearchOffset));
         if (!searchText.equals(nextSearchText) || nextSearchOffset == 0) {
             resetSearchParams();
             aImageResults.clear();
@@ -186,7 +193,6 @@ public class SearchActivity extends AppCompatActivity implements SearchFilterDia
     }
 
     public boolean onSetting(MenuItem item) {
-        Log.i("in setting", "-------------");
         showFilterSettingDialog();
         return true;
     }
