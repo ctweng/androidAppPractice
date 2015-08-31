@@ -25,7 +25,7 @@ The following **optional** features are implemented:
 * [v] Used the **ActionBar SearchView** or custom layout as the query box instead of an EditText
 * [v] User can **share an image** to their friends or email it to themselves
 * [v] Replaced Filter Settings Activity with a lightweight modal overlay
-* [ ] Improved the user interface and experiment with image assets and/or styling and coloring
+* [v] Improved the user interface and experiment with image assets and/or styling and coloring
 
 The following **bonus** features are implemented:
 

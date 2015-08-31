@@ -2,7 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:id="@+id/fragment_search_filters">
 
     <TextView
             android:layout_width="wrap_content"
@@ -11,7 +12,12 @@
             android:id="@+id/tvFitlerType"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="10dp"
+        android:minWidth="50dp"
+        android:textStyle="bold"
+        android:textColor="#ff1029" />
 
     <TextView
             android:layout_width="wrap_content"
@@ -19,7 +25,11 @@
             android:text="@string/color_filter_type"
             android:id="@+id/tvFilterColor"
         android:layout_below="@+id/tvFitlerType"
-        android:layout_alignLeft="@+id/tvFitlerType" />
+        android:layout_alignLeft="@+id/tvFitlerType"
+        android:layout_marginTop="10dp"
+        android:minWidth="50dp"
+        android:textStyle="bold"
+        android:textColor="#ff1029" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -27,7 +37,11 @@
         android:text="@string/site_filter_label"
         android:id="@+id/tvFilterSite"
         android:layout_alignLeft="@+id/tvFitlerType"
-        android:layout_below="@+id/tvSize" />
+        android:layout_below="@+id/tvSize"
+        android:layout_marginTop="10dp"
+        android:minWidth="50dp"
+        android:textStyle="bold"
+        android:textColor="#ff1029" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -36,15 +50,20 @@
         android:id="@+id/tvSize"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/tvFilterColor"
-        android:layout_alignLeft="@+id/tvFitlerType" />
+        android:layout_alignLeft="@+id/tvFitlerType"
+        android:layout_marginTop="10dp"
+        android:minWidth="50dp"
+        android:textStyle="bold"
+        android:textColor="#ff1029" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/etSite"
-        android:layout_below="@+id/tvFilterSite"
-        android:layout_toRightOf="@+id/tvSize"
-        android:layout_toEndOf="@+id/tvSize" />
+        android:layout_toRightOf="@+id/tvFilterSite"
+        android:layout_toEndOf="@+id/tvSize"
+        android:layout_alignTop="@+id/tvFilterSite"
+        android:minWidth="250dp" />
 
     <Spinner
         android:layout_width="wrap_content"
@@ -61,9 +80,9 @@
         android:id="@+id/spFilterType"
         android:entries="@array/filter_type_array"
         android:layout_alignParentTop="false"
-        android:layout_toRightOf="@+id/tvFilterColor"
         android:layout_toEndOf="@+id/tvFilterColor"
-        android:layout_alignTop="@+id/tvFitlerType" />
+        android:layout_alignTop="@+id/tvFitlerType"
+        android:layout_toRightOf="@+id/tvFitlerType" />
 
     <Spinner
         android:layout_width="wrap_content"
