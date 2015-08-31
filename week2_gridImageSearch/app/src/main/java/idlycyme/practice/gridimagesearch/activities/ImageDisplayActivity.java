@@ -6,13 +6,18 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
+import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -28,12 +33,32 @@ import idlycyme.practice.gridimagesearch.models.ImageResult;
 
 public class ImageDisplayActivity extends AppCompatActivity {
     private ShareActionProvider miShareAction;
+    private GestureDetectorCompat mGestureDetector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_display);
-        //getSupportActionBar().hide();
+        getSupportActionBar().hide();
+        ImageView ivFull = (ImageView)findViewById(R.id.ivImageFull);
+        mGestureDetector = new GestureDetectorCompat(getBaseContext(), new GestureDetector.SimpleOnGestureListener () {
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent e) {
+                if (getSupportActionBar().isShowing()) {
+                    getSupportActionBar().hide();
+                } else {
+                    getSupportActionBar().show();
+                }
+                return true;
+                //return super.onSingleTapUp(e);
+            }
+        });
+        ivFull.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return mGestureDetector.onTouchEvent(event);
+            }
+        });
     }
 
     private void fetchImage(){
