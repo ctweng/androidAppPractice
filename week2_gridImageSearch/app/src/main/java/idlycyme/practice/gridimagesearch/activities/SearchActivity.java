@@ -28,6 +28,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import idlycyme.practice.gridimagesearch.R;
@@ -217,7 +218,13 @@ public class SearchActivity extends AppCompatActivity implements SearchFilterDia
 
     private RequestParams buildRequestParams(int nextSearchOffset) {
         RequestParams params = new RequestParams();
-        params.put(getString(query_search_filter_param), nextSearchText);
+        String encodedText = nextSearchText;
+        try {
+            encodedText = URLEncoder.encode(nextSearchText, "utf-8");
+        } catch (java.io.UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        params.put(getString(query_search_filter_param), encodedText);
         params.put(getString(offset_search_filter_param), nextSearchOffset);
         params.put(getString(limit_search_filter_param), offestIncrement);
         if (!searchFilterSite.equals("")) {
