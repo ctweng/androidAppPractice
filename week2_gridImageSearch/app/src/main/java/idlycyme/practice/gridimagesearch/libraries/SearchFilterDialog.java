@@ -1,26 +1,21 @@
 package idlycyme.practice.gridimagesearch.libraries;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
-
-import java.lang.reflect.Array;
 
 import idlycyme.practice.gridimagesearch.R;
 
 /**
  * Created by cyme on 8/30/15.
  */
-public class SearchFilterDialog extends DialogFragment implements TextView.OnEditorActionListener, AdapterView.OnItemSelectedListener {
+public class SearchFilterDialog extends DialogFragment {
     private EditText mEditTextSite;
     private Spinner mSpinnerColor;
     private Spinner mSpinnerSize;
@@ -68,25 +63,11 @@ public class SearchFilterDialog extends DialogFragment implements TextView.OnEdi
         mEditTextSite.setText(lastSite);
 
         mEditTextSite.requestFocus();
-        mEditTextSite.setOnEditorActionListener(this);
-        mSpinnerColor.setOnItemSelectedListener(this);
-        mSpinnerSize.setOnItemSelectedListener(this);
-        mSpinnerType.setOnItemSelectedListener(this);
+
         // Show soft keyboard automatically
         getDialog().getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         return view;
-    }
-
-    @Override
-    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        triggerListenerOnSettingChange();
-        return true;
-    }
-
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        triggerListenerOnSettingChange();
     }
 
     private void triggerListenerOnSettingChange() {
@@ -99,7 +80,8 @@ public class SearchFilterDialog extends DialogFragment implements TextView.OnEdi
     }
 
     @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
+    public void onDismiss(DialogInterface dialog) {
+        triggerListenerOnSettingChange();
+        super.onDismiss(dialog);
     }
 }

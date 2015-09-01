@@ -63,7 +63,12 @@
         android:layout_toRightOf="@+id/tvFilterSite"
         android:layout_toEndOf="@+id/tvSize"
         android:layout_alignTop="@+id/tvFilterSite"
-        android:minWidth="250dp" />
+        android:minWidth="250dp"
+        android:lines="1"
+        android:longClickable="false"
+        android:linksClickable="false"
+        android:maxLines="1"
+        android:singleLine="true" />
 
     <Spinner
         android:layout_width="wrap_content"

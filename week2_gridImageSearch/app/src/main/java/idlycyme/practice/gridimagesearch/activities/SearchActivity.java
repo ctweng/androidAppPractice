@@ -1,6 +1,7 @@
 package idlycyme.practice.gridimagesearch.activities;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -13,10 +14,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.GridView;
 import android.widget.Toast;
 
 import com.etsy.android.grid.StaggeredGridView;
@@ -54,6 +52,7 @@ public class SearchActivity extends AppCompatActivity implements SearchFilterDia
     private int searchFilterColor = 0;
     private int searchFilterSize = 0;
     private int offestIncrement = 8;
+    private boolean isSearching = false;
     private int maxSearchOffset;
     private static boolean onQueryTextSubmitTwice = true;
     private static final String searchURL = "http://ajax.googleapis.com/ajax/services/search/images?v=1.0";
@@ -100,7 +99,7 @@ public class SearchActivity extends AppCompatActivity implements SearchFilterDia
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_search, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         searchView.setIconifiedByDefault(false);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -110,12 +109,15 @@ public class SearchActivity extends AppCompatActivity implements SearchFilterDia
                     Toast.makeText(getBaseContext(), "Please enter something to search", Toast.LENGTH_SHORT).show();
                     return true;
                 }
+
                 Log.i("new query", query);
-                Log.i("onQtwice", String.valueOf(onQueryTextSubmitTwice));
-                if (onQueryTextSubmitTwice) {
-                    fetchSearchResults(query, 0);
-                }
-                onQueryTextSubmitTwice = !onQueryTextSubmitTwice;
+                //Log.i("onQtwice", String.valueOf(onQueryTextSubmitTwice));
+                //if (onQueryTextSubmitTwice) {
+                fetchSearchResults(query, 0);
+                //}
+                searchView.setQuery("", false);
+                searchView.setQueryHint("Current search is " + query);
+                //onQueryTextSubmitTwice = !onQueryTextSubmitTwice;
                 return true;
             }
 
@@ -143,26 +145,33 @@ public class SearchActivity extends AppCompatActivity implements SearchFilterDia
         if (!isNetworkAvailable()) {
             Toast.makeText(this, "Network unavailable, try later!", Toast.LENGTH_LONG).show();
         }
+        if (searchText.equals("") || isSearching == true) {
+            return;
+        }
         Log.i("====== search is ", searchText + "  " + String.valueOf(nextSearchOffset));
         if (!searchText.equals(nextSearchText) || nextSearchOffset == 0) {
             resetSearchParams();
-            aImageResults.clear();
             nextSearchText = searchText;
+            aImageResults.clear();
         } else if (maxSearchOffset != -1 && maxSearchOffset < nextSearchOffset) {
             Toast.makeText(this, "No more results!", Toast.LENGTH_SHORT).show();
             resetSearchParams();
             return;
         }
-
+        isSearching = true;
         apiClient.get(searchURL, buildRequestParams(nextSearchOffset), new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                JSONArray imageResultsJson = null;
+                isSearching = false;
                 try {
-                    Log.i("cursor", response.getJSONObject("responseData").getJSONObject("cursor").toString());
+                    Log.i("cursor", response.getJSONObject("responseData").toString());
+                    if (response.getJSONObject("responseData").getJSONArray("results").length() == 0) {
+                        Toast.makeText(getBaseContext(), "No data found", Toast.LENGTH_LONG).show();
+                        return;
+                    }
                     JSONArray pages = response.getJSONObject("responseData").getJSONObject("cursor").getJSONArray("pages");
                     maxSearchOffset = Integer.valueOf(pages.getJSONObject(pages.length() - 1).getString("start"));
-                    imageResultsJson = response.getJSONObject("responseData").getJSONArray("results");
+                    JSONArray imageResultsJson = response.getJSONObject("responseData").getJSONArray("results");
                     imageResults.addAll(ImageResult.fromJSONArray(imageResultsJson));
                     aImageResults.notifyDataSetChanged();
 
@@ -175,6 +184,7 @@ public class SearchActivity extends AppCompatActivity implements SearchFilterDia
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                isSearching = false;
                 super.onFailure(statusCode, headers, responseString, throwable);
 
                 Log.d("client failure", responseString + "           " + String.valueOf(statusCode) + "          " + headers.toString());
@@ -234,4 +244,5 @@ public class SearchActivity extends AppCompatActivity implements SearchFilterDia
         searchFilterColor = color;
         fetchSearchResults(nextSearchText, 0);
     }
+
 }
