@@ -11,6 +11,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:nestedScrollingEnabled="false"
+
         android:padding="1dp" />
 
     <TextView
@@ -21,6 +22,9 @@
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/ivProfileImage"
         android:layout_toEndOf="@+id/ivProfileImage"
+        android:clickable="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
         android:padding="1dp" />
 
     <TextView
@@ -29,5 +33,48 @@
         android:text="New Text"
         android:id="@+id/tvBody"
         android:layout_below="@+id/tvUserName"
+
+
         android:layout_toRightOf="@+id/ivProfileImage" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ibReply"
+        android:src="@drawable/reply"
+        android:layout_below="@+id/ivProfileImage"
+        android:layout_alignRight="@+id/tvBody"
+
+        android:layout_alignEnd="@+id/tvBody" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ibFavorite"
+        android:src="@drawable/favorite"
+        android:layout_alignTop="@+id/ibReply"
+
+        android:layout_centerHorizontal="true" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ibRetweet"
+        android:layout_alignTop="@+id/ibFavorite"
+        android:layout_toRightOf="@+id/ibFavorite"
+        android:layout_toEndOf="@+id/ibFavorite"
+        android:layout_marginLeft="66dp"
+        android:layout_marginStart="66dp"
+
+        android:src="@drawable/retweet" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="12h"
+        android:id="@+id/tvTimestamp"
+        android:layout_alignTop="@+id/tvUserName"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
 </RelativeLayout>

@@ -1,18 +1,25 @@
 package idlycyme.practice.apps.twitter.models;
 
+import android.text.format.DateUtils;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * Created by cyme on 9/2/15.
  */
-public class Tweet {
+public class Tweet implements Serializable{
     private String body;
     private long uid;
     private String createdAt;
+    private String id;
 
     public User getUser() {
         return user;
@@ -39,6 +46,7 @@ public class Tweet {
             tweet.uid = jsonObject.getLong("id");
             tweet.createdAt = jsonObject.getString("created_at");
             tweet.user = User.fromJSON(jsonObject.getJSONObject("user"));
+            tweet.id = jsonObject.getString("id_str");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -63,4 +71,24 @@ public class Tweet {
         return tweets;
     }
 
+    public String getRelativeTimeAgo() {
+        String twitterFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
+        SimpleDateFormat sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
+        sf.setLenient(true);
+
+        String relativeDate = "";
+        try {
+            long dateMillis = sf.parse(createdAt).getTime();
+            relativeDate = DateUtils.getRelativeTimeSpanString(dateMillis,
+                    System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return relativeDate;
+    }
+
+    public String getId() {
+        return id;
+    }
 }

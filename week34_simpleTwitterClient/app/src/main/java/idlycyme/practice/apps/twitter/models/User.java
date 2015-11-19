@@ -3,10 +3,12 @@ package idlycyme.practice.apps.twitter.models;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
+
 /**
  * Created by cyme on 9/2/15.
  */
-public class User {
+public class User implements Serializable {
     public String getName() {
         return name;
     }

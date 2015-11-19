@@ -23,32 +23,121 @@ import com.loopj.android.http.RequestParams;
  */
 public class TwitterClient extends OAuthBaseClient {
 	public static final Class<? extends Api> REST_API_CLASS = TwitterApi.class; // Change this
-	public static final String REST_URL = "https://api.twitter.com/1.1/"; // Change this, base API URL
-	public static final String REST_CONSUMER_KEY = "aMetQWnZiA7ShYEwvHVUqpW";       // Change this
-	public static final String REST_CONSUMER_SECRET = "DbpoSeltwU3bK22GQi1SlwxEMoqezeXqr715BBogusQ37UZ6"; // Change this
+	public static final String REST_URL = "https://api.twitter.com/1.1"; // Change this, base API URL
+	public static final String REST_CONSUMER_KEY = "a0Met9QWnZiA7ShYEwvHVUqpW";       // Change this
+	public static final String REST_CONSUMER_SECRET = "DbpoSeltwU3bK22GQi1SlwxEMO3oqezeXqr715BBogusQ37UZ6"; // Change this
 	public static final String REST_CALLBACK_URL = "oauth://idlycyme"; // Change this (here and in manifest)
+    public static final int TIMELINE_MAX_COUNT_EX = 50;
+    public static final int TIMELINE_MIN_COUNT_EX = 20;
+    public static final int TIMELINE_DEFAULT_COUNT = 20;
 
 	public TwitterClient(Context context) {
 		super(context, REST_API_CLASS, REST_URL, REST_CONSUMER_KEY, REST_CONSUMER_SECRET, REST_CALLBACK_URL);
 	}
 
-	// CHANGE THIS
-	// DEFINE METHODS for different API endpoints here
-	public void getInterestingnessList(AsyncHttpResponseHandler handler) {
-		String apiUrl = getApiUrl("?nojsoncallback=1&method=flickr.interestingness.getList");
-		// Can specify query string params directly or through RequestParams.
-		RequestParams params = new RequestParams();
-		params.put("format", "json");
-		client.get(apiUrl, params, handler);
+	public void getHomeTimeline(AsyncHttpResponseHandler handler, String maxId, int count) {
+        _getTimelineCommon(0, handler, maxId, count);
 	}
 
-	public void getHomeTimeline(AsyncHttpResponseHandler handler) {
-		String url = getApiUrl("statuses/home_timeline.json");
-		RequestParams params = new RequestParams();
-		params.put("count", 20);
-		params.put("since_id", 1);
-		getClient().get(url, params, handler);
+    public void getUserTimeline(AsyncHttpResponseHandler handler, String maxId, int count) {
+        _getTimelineCommon(1, handler, maxId, count);
+    }
+
+    public void getMentionsTimeline(AsyncHttpResponseHandler handler, String maxId, int count) {
+        _getTimelineCommon(2, handler, maxId, count);
+    }
+
+    private void _getTimelineCommon(int type, AsyncHttpResponseHandler handler, String maxId, int count) {
+        String apiBase = "";
+        switch (type) {
+            case 1: //user
+                apiBase = "user_timeline";
+                break;
+            case 2: //mentions
+                apiBase = "mentions_timeline";
+            case 0: //home
+            default:
+                apiBase = "home_timeline";
+                break;
+        }
+        String url = getApiUrl("statuses/" + apiBase + ".json");
+        RequestParams params = new RequestParams();
+        if (count > TIMELINE_MAX_COUNT_EX || count < TIMELINE_MIN_COUNT_EX) {
+            count = TIMELINE_DEFAULT_COUNT;
+        }
+        params.put("count", count);
+        if (!maxId.isEmpty()) {
+            params.put("max_id", maxId);
+        }
+        getClient().get(url, params, handler);
+    }
+
+	public void getLoggedInCredential(AsyncHttpResponseHandler handler) {
+		String url = getApiUrl("account/verify_credentials.json");
+		getClient().get(url, handler);
 	}
+
+    public void postTweet(AsyncHttpResponseHandler handler, String text, String idToReply) {
+        if (text.equals("")) {
+            return;
+        }
+        String url = getApiUrl("statuses/update.json");
+        RequestParams params = new RequestParams();
+        params.put("status", text);
+        // reply case
+        if (!idToReply.isEmpty()) {
+            params.put("in_reply_to_status_id", idToReply);
+        }
+        getClient().post(url, params, handler);
+    }
+
+    public void postRetweet(AsyncHttpResponseHandler handler, String tweetId) {
+        if (tweetId.isEmpty()) {
+            return;
+        }
+        String url = getApiUrl("statuses/retweet/" + tweetId + ".json");
+        getClient().post(url, handler);
+    }
+
+    public void postFavorite(AsyncHttpResponseHandler handler, String tweetId) {
+        if (tweetId.isEmpty()) {
+            return;
+        }
+        String url = getApiUrl("favorites/create.json" + tweetId + ".json");
+        RequestParams params = new RequestParams();
+        params.put("id", tweetId);
+        getClient().post(url, handler);
+    }
+
+    public void deleteFavorite(AsyncHttpResponseHandler handler, String tweetId) {
+        if (tweetId.isEmpty()) {
+            return;
+        }
+        String url = getApiUrl("favorites/destroy.json" + tweetId + ".json");
+        RequestParams params = new RequestParams();
+        params.put("id", tweetId);
+        getClient().post(url, handler);
+    }
+
+    public void getTweet(AsyncHttpResponseHandler handler, String tweetId) {
+        if (tweetId.isEmpty()) {
+            return;
+        }
+        String url = getApiUrl("statuses/show/" + tweetId + ".json");
+        RequestParams params = new RequestParams();
+        params.put("include_my_retweet", 1);
+        getClient().post(url, handler);
+    }
+
+    public void deleteTweet(AsyncHttpResponseHandler handler, String tweetId) {
+        if (tweetId.isEmpty()) {
+            return;
+        }
+        String url = getApiUrl("statuses/destroy/" + tweetId + ".json");
+        RequestParams params = new RequestParams();
+        params.put("include_my_retweet", 1);
+        getClient().post(url, handler);
+    }
 
 	/* 1. Define the endpoint URL with getApiUrl and pass a relative path to the endpoint
 	 * 	  i.e getApiUrl("statuses/home_timeline.json");

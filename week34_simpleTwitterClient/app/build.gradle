@@ -5,7 +5,7 @@ android {
     buildToolsVersion "21.1.2"
 
     defaultConfig {
-        applicationId "com.codepath.apps.restclienttemplate"
+        applicationId "idlycyme.practice.apps.twitter"
         minSdkVersion 16
         targetSdkVersion 21
     }
@@ -25,7 +25,7 @@ repositories {
 
 dependencies {
     compile fileTree(dir: 'libs', include: '*.jar')
-    compile 'com.android.support:appcompat-v7:21.0.0+'
+    compile 'com.android.support:appcompat-v7:22.2.1'
     // Picasso for remote image loading
     compile 'com.squareup.picasso:picasso:2.4.0'
     // Android Async Http for sending async network requests

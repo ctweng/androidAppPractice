@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -30,13 +31,25 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_tweet, parent, false);
         }
+        // button click listener
+        ImageButton ibReply = (ImageButton)convertView.findViewById(R.id.ibReply);
+        ibReply.setOnClickListener((View.OnClickListener) getContext());
+        ImageButton ibFavorite = (ImageButton)convertView.findViewById(R.id.ibFavorite);
+        ibFavorite.setOnClickListener((View.OnClickListener) getContext());
+        ImageButton ibRetweet = (ImageButton)convertView.findViewById(R.id.ibRetweet);
+        ibRetweet.setOnClickListener((View.OnClickListener) getContext());
+
         ImageView ivProfileImage = (ImageView)convertView.findViewById(R.id.ivProfileImage);
         TextView tvUsername = (TextView)convertView.findViewById(R.id.tvUserName);
         TextView tvBody = (TextView)convertView.findViewById(R.id.tvBody);
+        TextView tvTimestamp = (TextView)convertView.findViewById(R.id.tvTimestamp);
+
         tvUsername.setText(tweet.getUser().getName());
         tvBody.setText(tweet.getBody());
+        tvTimestamp.setText(tweet.getRelativeTimeAgo());
         ivProfileImage.setImageResource(android.R.color.transparent);
         Picasso.with(getContext()).load(tweet.getUser().getProfileImageUrl()).into(ivProfileImage);
         return convertView;
     }
+
 }
