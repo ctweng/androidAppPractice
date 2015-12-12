@@ -1,12 +1,15 @@
 package idlycyme.practice.apps.twitter.models;
 
+import android.media.Image;
 import android.text.format.DateUtils;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,12 +23,41 @@ public class Tweet implements Serializable{
     private long uid;
     private String createdAt;
     private String id;
+    private ArrayList<String> urls;
+    private ArrayList<String> imageUrlStrings;
+    private User user;
+
+    public void setBody(String body) {
+        this.body = body;
+    }
+
+    public void setUid(long uid) {
+        this.uid = uid;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setUrls(ArrayList<String> urls) {
+        this.urls = urls;
+    }
+
+    public void setImageUrlStrings(ArrayList<String> imageUrlStrings) {
+        this.imageUrlStrings = imageUrlStrings;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public User getUser() {
         return user;
     }
-
-    private User user;
 
     public String getBody() {
         return body;
@@ -40,6 +72,7 @@ public class Tweet implements Serializable{
     }
 
     public static Tweet fromJSON(JSONObject jsonObject) {
+        Log.i("tweet json = ", jsonObject.toString());
         Tweet tweet = new Tweet();
         try {
             tweet.body = jsonObject.getString("text");
@@ -47,6 +80,14 @@ public class Tweet implements Serializable{
             tweet.createdAt = jsonObject.getString("created_at");
             tweet.user = User.fromJSON(jsonObject.getJSONObject("user"));
             tweet.id = jsonObject.getString("id_str");
+            tweet.urls = new ArrayList<>();
+            JSONObject entities = jsonObject.getJSONObject("entities");
+            if (entities.has("urls")) {
+                for (int i = 0; i < entities.getJSONArray("urls").length(); i++) {
+                    JSONObject urlObject = entities.getJSONArray("urls").getJSONObject(i);
+                    tweet.urls.add(urlObject.getString("url"));
+                }
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -91,4 +132,6 @@ public class Tweet implements Serializable{
     public String getId() {
         return id;
     }
+
+    public ArrayList<String> getUrls() { return  urls; }
 }

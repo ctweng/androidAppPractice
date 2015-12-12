@@ -103,20 +103,20 @@ public class TwitterClient extends OAuthBaseClient {
         if (tweetId.isEmpty()) {
             return;
         }
-        String url = getApiUrl("favorites/create.json" + tweetId + ".json");
+        String url = getApiUrl("favorites/create.json");
         RequestParams params = new RequestParams();
         params.put("id", tweetId);
-        getClient().post(url, handler);
+        getClient().post(url, params, handler);
     }
 
     public void deleteFavorite(AsyncHttpResponseHandler handler, String tweetId) {
         if (tweetId.isEmpty()) {
             return;
         }
-        String url = getApiUrl("favorites/destroy.json" + tweetId + ".json");
+        String url = getApiUrl("favorites/destroy.json");
         RequestParams params = new RequestParams();
         params.put("id", tweetId);
-        getClient().post(url, handler);
+        getClient().post(url, params, handler);
     }
 
     public void getTweet(AsyncHttpResponseHandler handler, String tweetId) {

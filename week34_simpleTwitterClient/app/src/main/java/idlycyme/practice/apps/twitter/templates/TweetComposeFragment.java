@@ -67,11 +67,18 @@ public class TweetComposeFragment extends DialogFragment {
         return fragment;
     }
 
-    public TweetComposeFragment() {
-        // Required empty public constructor
+    public static TweetComposeFragment newInstance(User author) {
+        TweetComposeFragment fragment = new TweetComposeFragment();
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_AUTHOR, author);
+        fragment.setArguments(args);
+        return fragment;
     }
 
 
+    public TweetComposeFragment() {
+        // Required empty public constructor
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -124,7 +131,11 @@ public class TweetComposeFragment extends DialogFragment {
         btnConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mListener.onComposeDone(etText.getText().toString(), "");
+                String id = "";
+                if (tweet != null) {
+                    id = tweet.getId();
+                }
+                mListener.onComposeDone(etText.getText().toString(), id);
             }
         });
 

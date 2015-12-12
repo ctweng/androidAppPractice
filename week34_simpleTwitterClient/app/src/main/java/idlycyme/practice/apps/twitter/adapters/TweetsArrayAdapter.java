@@ -1,6 +1,8 @@
 package idlycyme.practice.apps.twitter.adapters;
 
 import android.content.Context;
+import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,10 +36,13 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
         // button click listener
         ImageButton ibReply = (ImageButton)convertView.findViewById(R.id.ibReply);
         ibReply.setOnClickListener((View.OnClickListener) getContext());
+        ibReply.setTag(position);
         ImageButton ibFavorite = (ImageButton)convertView.findViewById(R.id.ibFavorite);
         ibFavorite.setOnClickListener((View.OnClickListener) getContext());
+        ibFavorite.setTag(position);
         ImageButton ibRetweet = (ImageButton)convertView.findViewById(R.id.ibRetweet);
         ibRetweet.setOnClickListener((View.OnClickListener) getContext());
+        ibRetweet.setTag(position);
 
         ImageView ivProfileImage = (ImageView)convertView.findViewById(R.id.ivProfileImage);
         TextView tvUsername = (TextView)convertView.findViewById(R.id.tvUserName);

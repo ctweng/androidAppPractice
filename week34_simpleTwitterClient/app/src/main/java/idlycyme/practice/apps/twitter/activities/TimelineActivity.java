@@ -3,6 +3,7 @@ package idlycyme.practice.apps.twitter.activities;
 import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -32,6 +33,8 @@ import idlycyme.practice.apps.twitter.adapters.TweetsArrayAdapter;
 import idlycyme.practice.apps.twitter.models.Tweet;
 import idlycyme.practice.apps.twitter.models.User;
 import idlycyme.practice.apps.twitter.templates.TweetComposeFragment;
+import java.util.Calendar;
+import java.text.SimpleDateFormat;
 
 public class TimelineActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, View.OnClickListener, TweetComposeFragment.OnComposeDoneListener{
     private TwitterClient client;
@@ -43,12 +46,17 @@ public class TimelineActivity extends AppCompatActivity implements AdapterView.O
     private String lastTweetId = "";
     private int limit = 20;
     private EndlessScrollListener esListener;
+    private SwipeRefreshLayout swipeContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
 
+        // setup pull-to-refresh
+        setupPullToRefresh();
+
+        // setup ui content
         loggedInUser = (User)getIntent().getSerializableExtra("loggedInUser");
         lvTweets = (ListView)findViewById(R.id.lvTweets);
         tweets = new ArrayList<>();
@@ -64,6 +72,8 @@ public class TimelineActivity extends AppCompatActivity implements AdapterView.O
                 }
             });
         }
+
+        // setup load-more
         esListener = new EndlessScrollListener() {
             @Override
             public void onLoadMore() {
@@ -71,16 +81,31 @@ public class TimelineActivity extends AppCompatActivity implements AdapterView.O
             }
         };
         lvTweets.setOnScrollListener(esListener);
+    }
 
+    private void setupPullToRefresh() {
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.activity_timeline);
+        // Setup refresh listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                lastTweetId = "";
+                tweets.clear();
+                populateTimeline();
+            }
+        });
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
     }
 
     private void populateTimeline() {
-        Log.d("-------------", "fffffffffff");
         client.getHomeTimeline(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray jsonArray) {
                 //super.onSuccess(statusCode, headers, json);
-                Log.d("ddd", jsonArray.toString());
                 ArrayList<Tweet> tweets = Tweet.fromJSONArray(jsonArray);
                 if (tweets.get(tweets.size() - 1).getId().equals(lastTweetId) == true) {
                     esListener.noMoreData = true;
@@ -88,6 +113,7 @@ public class TimelineActivity extends AppCompatActivity implements AdapterView.O
                     lastTweetId = tweets.get(tweets.size() - 1).getId();
                     aTweets.addAll(tweets);
                 }
+                swipeContainer.setRefreshing(false);
             }
 
             @Override
@@ -99,7 +125,7 @@ public class TimelineActivity extends AppCompatActivity implements AdapterView.O
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
+                swipeContainer.setRefreshing(false);
                 Log.d("getHomeTimeline failed", errorResponse.toString());
             }
         }, lastTweetId, limit);
@@ -121,8 +147,16 @@ public class TimelineActivity extends AppCompatActivity implements AdapterView.O
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.logout) {
-            return true;
+        switch (id) {
+            case R.id.miLogout:
+                Intent i = new Intent(this, LoginActivity.class);
+                startActivity(i);
+                return true;
+            case R.id.miCompose:
+                FragmentManager fm = getSupportFragmentManager();
+                tcfReply = TweetComposeFragment.newInstance(loggedInUser, null);
+                tcfReply.show(fm, "fragment_edit_name");
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -131,38 +165,58 @@ public class TimelineActivity extends AppCompatActivity implements AdapterView.O
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         Log.i("zzzz", "zzzzzz");
+        Intent intent = new Intent(this, TweetActivity.class);
+        Bundle params = new Bundle();
+        params.putSerializable("tweet", tweets.get(i));
+        startActivity(intent);
     }
 
     @Override
     public void onClick(View view) {
-
+        int position = (Integer)view.getTag();
+        String id = tweets.get(position).getId();
         switch (view.getId()) {
             case  R.id.ibReply:
                 FragmentManager fm = getSupportFragmentManager();
-                tcfReply = TweetComposeFragment.newInstance(loggedInUser, null);
+                tcfReply = TweetComposeFragment.newInstance(loggedInUser, tweets.get(position));
                 tcfReply.show(fm, "fragment_edit_name");
                 break;
             case R.id.ibFavorite:
-
+                onFavorite(id);
                 break;
             case R.id.ibRetweet:
-
                 break;
             default:
                 break;
         }
-
     }
 
-    public void onLogout(MenuItem item) {
-        Intent i = new Intent(this, LoginActivity.class);
-        startActivity(i);
+    public void onFavorite(String idToReply) {
+        Log.i("dsfadsf", "id " + idToReply);
+        client.postFavorite(new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                super.onSuccess(statusCode, headers, response);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject response) {
+                super.onFailure(statusCode, headers, throwable, response);
+                Log.e("Favorite failure", response.toString());
+            }
+        }, idToReply);
     }
 
     public void onComposeDone(String text, String idToReply) {
         tcfReply.dismiss();
-        Log.i("1111", "adfadfaf");
-        client.postTweet(new JsonHttpResponseHandler(){
+        Tweet newTweet = new Tweet();
+        newTweet.setUser(tweets.get(0).getUser());
+        newTweet.setBody(text);
+        newTweet.setCreatedAt(new SimpleDateFormat("EEE MMM dd HH:mm:ss ZZZZZ yyyy").format(Calendar.getInstance().getTime()));
+        tweets.add(0, newTweet);
+        aTweets.notifyDataSetChanged();
+
+        client.postTweet(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 super.onSuccess(statusCode, headers, response);
