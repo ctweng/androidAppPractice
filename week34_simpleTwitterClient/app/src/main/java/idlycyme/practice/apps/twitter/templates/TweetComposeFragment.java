@@ -105,7 +105,14 @@ public class TweetComposeFragment extends DialogFragment {
         tvUsername.setText(author.getName());
         Picasso.with(getActivity()).load(author.getProfileImageUrl()).into(ivProfile);
 
-        tvWordCount.setText(String.valueOf(DEFAULT_WORD_LIMIT) + " " + DEFAULT_WORD_UNIT);
+        if (tweet != null) {
+            etText.setText("@" + tweet.getUser().getScreenname() + " ");
+            etText.setSelection(etText.getText().length());
+            tvWordCount.setText(String.valueOf(DEFAULT_WORD_LIMIT - etText.getText().length()) + " " + DEFAULT_WORD_UNIT);
+        } else {
+            tvWordCount.setText(String.valueOf(DEFAULT_WORD_LIMIT) + " " + DEFAULT_WORD_UNIT);
+        }
+
         etText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
