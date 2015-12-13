@@ -2,15 +2,19 @@ package idlycyme.practice.apps.twitter.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 
+import com.activeandroid.query.Select;
 import com.codepath.oauth.OAuthLoginActionBarActivity;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.apache.http.Header;
 import org.json.JSONObject;
+
+import java.util.List;
 
 import idlycyme.practice.apps.twitter.R;
 import idlycyme.practice.apps.twitter.libraries.TwitterClient;
@@ -37,12 +41,34 @@ public class LoginActivity extends OAuthLoginActionBarActivity<TwitterClient> {
 	// i.e Display application "homepage"
 	@Override
 	public void onLoginSuccess() {
-        Intent i = new Intent(this, TimelineActivity.class);
+        List<User> loggedInUsers = new Select().from(User.class).where("isLoggedIn = ?", true).execute();
+        if (loggedInUsers != null && loggedInUsers.size() > 0) {
+            loggedInUser = loggedInUsers.get(0);
+            //Log.i("--------------------", loggedInUser.getScreenname().toString());
+            goToHomePage();
+            return;
+        }
+
+        // if loggedInUser is null, reterive it first
+        getClient().getLoggedInCredential(new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                loggedInUser = User.fromJSON(response);
+                loggedInUser.setIsLoogedIn(true);
+                loggedInUser.save();
+
+                goToHomePage();
+            }
+        });
+	}
+
+    private void goToHomePage() {
+        Intent i = new Intent(getBaseContext(), TimelineActivity.class);
         Bundle params = new Bundle();
         params.putSerializable("loggedInUser", loggedInUser);
         i.putExtra("loggedInUser", loggedInUser);
         startActivity(i);
-	}
+    }
 
 	// OAuth authentication flow failed, handle the error
 	// i.e Display an error dialog or toast
@@ -56,12 +82,6 @@ public class LoginActivity extends OAuthLoginActionBarActivity<TwitterClient> {
 	// This should be tied to a button used to login
 	public void loginToRest(View view) {
 		getClient().connect();
-		getClient().getLoggedInCredential(new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                loggedInUser = User.fromJSON(response);
-            }
-        });
 	}
 
 }

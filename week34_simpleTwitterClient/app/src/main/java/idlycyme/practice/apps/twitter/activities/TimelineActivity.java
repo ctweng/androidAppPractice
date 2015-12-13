@@ -2,27 +2,24 @@ package idlycyme.practice.apps.twitter.activities;
 
 import android.content.Intent;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
+import com.activeandroid.query.Select;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import java.util.ArrayList;
 
@@ -36,6 +33,7 @@ import idlycyme.practice.apps.twitter.models.User;
 import idlycyme.practice.apps.twitter.templates.TweetComposeFragment;
 import java.util.Calendar;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 public class TimelineActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, View.OnClickListener, TweetComposeFragment.OnComposeDoneListener{
     private TwitterClient client;
@@ -61,6 +59,13 @@ public class TimelineActivity extends AppCompatActivity implements AdapterView.O
         loggedInUser = (User)getIntent().getSerializableExtra("loggedInUser");
         lvTweets = (ListView)findViewById(R.id.lvTweets);
         tweets = new ArrayList<>();
+
+        // load preload data from activeandroid db
+        List<Tweet> cachedTweets = new Select().from(Tweet.class).orderBy("createdAt DESC").limit(20).execute();
+        if (cachedTweets != null && cachedTweets.size() > 0) {
+            tweets.addAll(cachedTweets);
+        }
+
         aTweets = new TweetsArrayAdapter(this, tweets);
         lvTweets.setAdapter(aTweets);
         lvTweets.setOnItemClickListener(TimelineActivity.this);
@@ -113,10 +118,13 @@ public class TimelineActivity extends AppCompatActivity implements AdapterView.O
                 } else {
                     tweets = Tweet.fromJSONArray(jsonArray);
                 }
-                if (tweets.get(tweets.size() - 1).getId().equals(lastTweetId) == true) {
+                if (lastTweetId == null) {
+                    aTweets.clear();
+                }
+                if (tweets.get(tweets.size() - 1).getIdString().equals(lastTweetId) == true) {
                     esListener.noMoreData = true;
                 } else {
-                    lastTweetId = tweets.get(tweets.size() - 1).getId();
+                    lastTweetId = tweets.get(tweets.size() - 1).getIdString();
                     aTweets.addAll(tweets);
                 }
                 swipeContainer.setRefreshing(false);
@@ -157,6 +165,7 @@ public class TimelineActivity extends AppCompatActivity implements AdapterView.O
             case R.id.miLogout:
                 Intent i = new Intent(this, LoginActivity.class);
                 startActivity(i);
+                client.clearAccessToken();
                 return true;
             case R.id.miCompose:
                 FragmentManager fm = getSupportFragmentManager();
@@ -183,7 +192,7 @@ public class TimelineActivity extends AppCompatActivity implements AdapterView.O
     public void onClick(View view) {
         int position = (Integer)view.getTag();
         Tweet tweet = tweets.get(position);
-        String id = tweet.getId();
+        String id = tweet.getIdString();
         switch (view.getId()) {
             case  R.id.ibReply:
                 FragmentManager fm = getSupportFragmentManager();
@@ -204,6 +213,9 @@ public class TimelineActivity extends AppCompatActivity implements AdapterView.O
     }
 
     public void onRetweet(String idToRetweet, Boolean undo) {
+        if (idToRetweet == null || idToRetweet.length() == 0) {
+            return;
+        }
         if (undo) {
             client.deleteTweet(new JsonHttpResponseHandler() {
                 @Override
@@ -234,6 +246,9 @@ public class TimelineActivity extends AppCompatActivity implements AdapterView.O
     }
 
     public void onFavorite(String idToReply, Boolean undo) {
+        if (idToReply == null || idToReply.length() == 0) {
+            return;
+        }
         if (undo) {
             client.deleteFavorite(new JsonHttpResponseHandler() {
                 @Override
@@ -269,6 +284,9 @@ public class TimelineActivity extends AppCompatActivity implements AdapterView.O
         newTweet.setUser(tweets.get(0).getUser());
         newTweet.setBody(text);
         newTweet.setCreatedAt(new SimpleDateFormat("EEE MMM dd HH:mm:ss ZZZZZ yyyy").format(Calendar.getInstance().getTime()));
+        newTweet.setFavorited(false);
+        newTweet.setRetweeted(false);
+        newTweet.setRetweeteable(false);
         tweets.add(0, newTweet);
         aTweets.notifyDataSetChanged();
 

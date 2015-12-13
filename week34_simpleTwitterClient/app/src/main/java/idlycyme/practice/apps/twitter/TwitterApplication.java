@@ -2,6 +2,8 @@ package idlycyme.practice.apps.twitter;
 
 import android.content.Context;
 
+import com.activeandroid.ActiveAndroid;
+
 import idlycyme.practice.apps.twitter.libraries.TwitterClient;
 
 /*
@@ -20,6 +22,7 @@ public class TwitterApplication extends com.activeandroid.app.Application {
 	public void onCreate() {
 		super.onCreate();
 		TwitterApplication.context = this;
+		ActiveAndroid.initialize(this);
 	}
 
 	public static TwitterClient getRestClient() {

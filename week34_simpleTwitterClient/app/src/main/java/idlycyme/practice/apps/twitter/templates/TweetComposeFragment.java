@@ -1,7 +1,6 @@
 package idlycyme.practice.apps.twitter.templates;
 
 import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.text.Editable;
@@ -140,7 +139,7 @@ public class TweetComposeFragment extends DialogFragment {
             public void onClick(View view) {
                 String id = "";
                 if (tweet != null) {
-                    id = tweet.getId();
+                    id = tweet.getIdString();
                 }
                 mListener.onComposeDone(etText.getText().toString(), id);
             }

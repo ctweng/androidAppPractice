@@ -67,7 +67,7 @@ public class TweetActivity extends AppCompatActivity implements AdapterView.OnIt
     public void onClick(View view) {
         int position = (Integer)view.getTag();
         Tweet tweet = tweets.get(position);
-        String id = tweet.getId();
+        String id = tweet.getIdString();
         switch (view.getId()) {
             case  R.id.ibReply:
                 FragmentManager fm = getSupportFragmentManager();

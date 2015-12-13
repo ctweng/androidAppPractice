@@ -1,15 +1,17 @@
 package idlycyme.practice.apps.twitter.models;
 
-import android.media.Image;
 import android.text.format.DateUtils;
 import android.util.Log;
+
+import com.activeandroid.Model;
+import com.activeandroid.annotation.Column;
+import com.activeandroid.annotation.Table;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
-import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,17 +20,41 @@ import java.util.Locale;
 /**
  * Created by cyme on 9/2/15.
  */
-public class Tweet implements Serializable{
+@Table(name = "Tweets")
+public class Tweet extends Model implements Serializable{
+    @Column(name = "body")
     private String body;
+
+    @Column(name = "uid", unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
     private long uid;
+
+    @Column(name = "createdAt")
     private String createdAt;
-    private String id;
+
+    @Column(name = "idString")
+    private String idString;
+
+    @Column(name = "urls")
     private ArrayList<String> urls;
+
     private ArrayList<String> imageUrlStrings;
+
+    @Column(name = "User", onUpdate = Column.ForeignKeyAction.CASCADE, onDelete = Column.ForeignKeyAction.CASCADE)
     private User user;
+
+    @Column(name = "favorited")
     private Boolean favorited;
+
+    @Column(name = "retweeted")
     private Boolean retweeted;
+
+    @Column(name = "retweeteable")
     private Boolean retweeteable;
+
+
+    public void setRetweeteable(Boolean retweeteable) {
+        this.retweeteable = retweeteable;
+    }
 
     public Boolean getRetweeteable() {
         return retweeteable;
@@ -62,8 +88,8 @@ public class Tweet implements Serializable{
         this.createdAt = createdAt;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setIdString(String idString) {
+        this.idString = idString;
     }
 
     public void setUrls(ArrayList<String> urls) {
@@ -94,6 +120,10 @@ public class Tweet implements Serializable{
         return createdAt;
     }
 
+    public Tweet() {
+        super();
+    };
+
     public static Tweet fromJSON(JSONObject jsonObject) {
         Log.i("tweet json = ", jsonObject.toString());
         Tweet tweet = new Tweet();
@@ -102,7 +132,7 @@ public class Tweet implements Serializable{
             tweet.uid = jsonObject.getLong("id");
             tweet.createdAt = jsonObject.getString("created_at");
             tweet.user = User.fromJSON(jsonObject.getJSONObject("user"));
-            tweet.id = jsonObject.getString("id_str");
+            tweet.idString = jsonObject.getString("id_str");
             tweet.retweeted = jsonObject.getBoolean("retweeted");
             tweet.favorited = jsonObject.getBoolean("favorited");
             tweet.urls = new ArrayList<>();
@@ -131,6 +161,7 @@ public class Tweet implements Serializable{
                     if (tweet.getUser().getUid() == uid) {
                         tweet.retweeteable = false;
                     }
+                    tweet.saveAllProperties();
                     tweets.add(tweet);
                 }
             } catch (JSONException e) {
@@ -148,6 +179,7 @@ public class Tweet implements Serializable{
                 JSONObject json = jsonArray.getJSONObject(i);
                 Tweet tweet = Tweet.fromJSON(json);
                 if (tweet != null) {
+                    tweet.saveAllProperties();
                     tweets.add(tweet);
                 }
             } catch (JSONException e) {
@@ -156,6 +188,11 @@ public class Tweet implements Serializable{
             }
         }
         return tweets;
+    }
+
+    public Long saveAllProperties() {
+        getUser().save();
+        return super.save();
     }
 
     public String getRelativeTimeAgo() {
@@ -175,8 +212,8 @@ public class Tweet implements Serializable{
         return relativeDate;
     }
 
-    public String getId() {
-        return id;
+    public String getIdString() {
+        return idString;
     }
 
     public ArrayList<String> getUrls() { return  urls; }
