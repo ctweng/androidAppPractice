@@ -37,12 +37,26 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
         ImageButton ibReply = (ImageButton)convertView.findViewById(R.id.ibReply);
         ibReply.setOnClickListener((View.OnClickListener) getContext());
         ibReply.setTag(position);
+
         ImageButton ibFavorite = (ImageButton)convertView.findViewById(R.id.ibFavorite);
         ibFavorite.setOnClickListener((View.OnClickListener) getContext());
         ibFavorite.setTag(position);
+        if (tweet.getFavorited()) {
+            ibFavorite.setImageResource(R.drawable.ic_favorite_on);
+        } else {
+            ibFavorite.setImageResource(R.drawable.ic_favorite);
+        }
+
         ImageButton ibRetweet = (ImageButton)convertView.findViewById(R.id.ibRetweet);
         ibRetweet.setOnClickListener((View.OnClickListener) getContext());
         ibRetweet.setTag(position);
+        if (tweet.getRetweeteable() == false) {
+            ibRetweet.setEnabled(false);
+        } else if (tweet.getRetweeted()) {
+            ibRetweet.setImageResource(R.drawable.ic_retweet_on);
+        } else {
+            ibRetweet.setImageResource(R.drawable.ic_retweet);
+        }
 
         ImageView ivProfileImage = (ImageView)convertView.findViewById(R.id.ivProfileImage);
         TextView tvUsername = (TextView)convertView.findViewById(R.id.tvUserName);

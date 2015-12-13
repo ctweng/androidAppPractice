@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -106,7 +107,12 @@ public class TimelineActivity extends AppCompatActivity implements AdapterView.O
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray jsonArray) {
                 //super.onSuccess(statusCode, headers, json);
-                ArrayList<Tweet> tweets = Tweet.fromJSONArray(jsonArray);
+                ArrayList<Tweet> tweets;
+                if (loggedInUser != null) {
+                    tweets = Tweet.fromJSONArrayAddRetweeteable(jsonArray, loggedInUser.getUid());
+                } else {
+                    tweets = Tweet.fromJSONArray(jsonArray);
+                }
                 if (tweets.get(tweets.size() - 1).getId().equals(lastTweetId) == true) {
                     esListener.noMoreData = true;
                 } else {
@@ -166,45 +172,95 @@ public class TimelineActivity extends AppCompatActivity implements AdapterView.O
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         Log.i("zzzz", "zzzzzz");
         Intent intent = new Intent(this, TweetActivity.class);
-        Bundle params = new Bundle();
-        params.putSerializable("tweet", tweets.get(i));
+        //Bundle params = new Bundle();
+        //params.putSerializable("tweet", tweets.get(i));
+        intent.putExtra("tweet", tweets.get(i));
+        intent.putExtra("loggedInUser", loggedInUser);
         startActivity(intent);
     }
 
     @Override
     public void onClick(View view) {
         int position = (Integer)view.getTag();
-        String id = tweets.get(position).getId();
+        Tweet tweet = tweets.get(position);
+        String id = tweet.getId();
         switch (view.getId()) {
             case  R.id.ibReply:
                 FragmentManager fm = getSupportFragmentManager();
-                tcfReply = TweetComposeFragment.newInstance(loggedInUser, tweets.get(position));
+                tcfReply = TweetComposeFragment.newInstance(loggedInUser, tweet);
                 tcfReply.show(fm, "fragment_edit_name");
                 break;
             case R.id.ibFavorite:
-                onFavorite(id);
+                onFavorite(id, tweet.getFavorited());
+                ImageButton button = (ImageButton)view;
+                button.setImageResource(R.drawable.ic_favorite_on);
                 break;
             case R.id.ibRetweet:
+                onRetweet(id, tweet.getRetweeted());
                 break;
             default:
                 break;
         }
     }
 
-    public void onFavorite(String idToReply) {
-        Log.i("dsfadsf", "id " + idToReply);
-        client.postFavorite(new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                super.onSuccess(statusCode, headers, response);
-            }
+    public void onRetweet(String idToRetweet, Boolean undo) {
+        if (undo) {
+            client.deleteTweet(new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    super.onSuccess(statusCode, headers, response);
+                }
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject response) {
-                super.onFailure(statusCode, headers, throwable, response);
-                Log.e("Favorite failure", response.toString());
-            }
-        }, idToReply);
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject response) {
+                    super.onFailure(statusCode, headers, throwable, response);
+                    Log.e("Favorite failure", response.toString());
+                }
+            }, idToRetweet);
+        } else {
+            client.postRetweet(new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    super.onSuccess(statusCode, headers, response);
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject response) {
+                    super.onFailure(statusCode, headers, throwable, response);
+                    Log.e("Favorite failure", response.toString());
+                }
+            }, idToRetweet);
+        }
+    }
+
+    public void onFavorite(String idToReply, Boolean undo) {
+        if (undo) {
+            client.deleteFavorite(new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    super.onSuccess(statusCode, headers, response);
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject response) {
+                    super.onFailure(statusCode, headers, throwable, response);
+                    Log.e("Favorite failure", response.toString());
+                }
+            }, idToReply);
+        } else {
+            client.postFavorite(new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    super.onSuccess(statusCode, headers, response);
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject response) {
+                    super.onFailure(statusCode, headers, throwable, response);
+                    Log.e("Favorite failure", response.toString());
+                }
+            }, idToReply);
+        }
     }
 
     public void onComposeDone(String text, String idToReply) {

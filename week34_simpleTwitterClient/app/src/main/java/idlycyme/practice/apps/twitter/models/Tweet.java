@@ -26,6 +26,29 @@ public class Tweet implements Serializable{
     private ArrayList<String> urls;
     private ArrayList<String> imageUrlStrings;
     private User user;
+    private Boolean favorited;
+    private Boolean retweeted;
+    private Boolean retweeteable;
+
+    public Boolean getRetweeteable() {
+        return retweeteable;
+    }
+
+    public Boolean getRetweeted() {
+        return retweeted;
+    }
+
+    public void setRetweeted(Boolean retweeted) {
+        this.retweeted = retweeted;
+    }
+
+    public Boolean getFavorited() {
+        return favorited;
+    }
+
+    public void setFavorited(Boolean favorited) {
+        this.favorited = favorited;
+    }
 
     public void setBody(String body) {
         this.body = body;
@@ -80,7 +103,10 @@ public class Tweet implements Serializable{
             tweet.createdAt = jsonObject.getString("created_at");
             tweet.user = User.fromJSON(jsonObject.getJSONObject("user"));
             tweet.id = jsonObject.getString("id_str");
+            tweet.retweeted = jsonObject.getBoolean("retweeted");
+            tweet.favorited = jsonObject.getBoolean("favorited");
             tweet.urls = new ArrayList<>();
+            tweet.retweeteable = true;
             JSONObject entities = jsonObject.getJSONObject("entities");
             if (entities.has("urls")) {
                 for (int i = 0; i < entities.getJSONArray("urls").length(); i++) {
@@ -92,7 +118,27 @@ public class Tweet implements Serializable{
             e.printStackTrace();
         }
         return tweet;
+    }
 
+    public static ArrayList<Tweet> fromJSONArrayAddRetweeteable(JSONArray jsonArray, long uid) {
+        ArrayList<Tweet> tweets = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            try {
+                JSONObject json = jsonArray.getJSONObject(i);
+                Tweet tweet = Tweet.fromJSON(json);
+                if (tweet != null) {
+                    Log.i("afddafsf", String.valueOf(uid) + " " + String.valueOf(tweet.getUser().getUid()));
+                    if (tweet.getUser().getUid() == uid) {
+                        tweet.retweeteable = false;
+                    }
+                    tweets.add(tweet);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+                continue;
+            }
+        }
+        return tweets;
     }
 
     public static ArrayList<Tweet> fromJSONArray(JSONArray jsonArray) {

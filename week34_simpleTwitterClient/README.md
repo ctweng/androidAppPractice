@@ -25,8 +25,8 @@ The following **optional** features are implemented:
 * [v] User can **click a link within a tweet body** on tweet details view. The click will launch the web browser with relevant page opened.
 * [v] User can **pull down to refresh tweets timeline**
 * [ ] User can **open the twitter app offline and see last loaded tweets**. Persisted in SQLite tweets are refreshed on every application launch. While "live data" is displayed when app can get it from Twitter API, it is also saved for use in offline mode.
-* [ ] User can tap a tweet to **open a detailed tweet view**
-* [ ] User can **select "reply" from detail view to respond to a tweet**
+* [v] User can tap a tweet to **open a detailed tweet view**
+* [v] User can **select "reply" from detail view to respond to a tweet**
 * [v] Improve the user interface and theme the app to feel "twitter branded"
 
 The following **bonus** features are implemented:
