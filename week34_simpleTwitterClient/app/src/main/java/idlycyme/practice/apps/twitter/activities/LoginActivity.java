@@ -44,7 +44,6 @@ public class LoginActivity extends OAuthLoginActionBarActivity<TwitterClient> {
         List<User> loggedInUsers = new Select().from(User.class).where("isLoggedIn = ?", true).execute();
         if (loggedInUsers != null && loggedInUsers.size() > 0) {
             loggedInUser = loggedInUsers.get(0);
-            //Log.i("--------------------", loggedInUser.getScreenname().toString());
             goToHomePage();
             return;
         }

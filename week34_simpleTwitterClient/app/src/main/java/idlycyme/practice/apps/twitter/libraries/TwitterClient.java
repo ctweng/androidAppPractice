@@ -4,6 +4,7 @@ import org.scribe.builder.api.Api;
 import org.scribe.builder.api.TwitterApi;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.codepath.oauth.OAuthBaseClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -36,26 +37,31 @@ public class TwitterClient extends OAuthBaseClient {
 	}
 
 	public void getHomeTimeline(AsyncHttpResponseHandler handler, String maxId, int count) {
-        _getTimelineCommon(0, handler, maxId, count);
+        _getTimelineCommon("home", handler, maxId, count);
 	}
 
     public void getUserTimeline(AsyncHttpResponseHandler handler, String maxId, int count) {
-        _getTimelineCommon(1, handler, maxId, count);
+        _getTimelineCommon("user", handler, maxId, count);
     }
 
     public void getMentionsTimeline(AsyncHttpResponseHandler handler, String maxId, int count) {
-        _getTimelineCommon(2, handler, maxId, count);
+        _getTimelineCommon("mentions", handler, maxId, count);
     }
 
-    private void _getTimelineCommon(int type, AsyncHttpResponseHandler handler, String maxId, int count) {
+    public void getTimeline(AsyncHttpResponseHandler handler, String maxId, int count, String type) {
+        _getTimelineCommon(type, handler, maxId, count);
+    }
+
+    private void _getTimelineCommon(String type, AsyncHttpResponseHandler handler, String maxId, int count) {
         String apiBase = "";
         switch (type) {
-            case 1: //user
+            case "user": //user
                 apiBase = "user_timeline";
                 break;
-            case 2: //mentions
+            case "mentions": //mentions
                 apiBase = "mentions_timeline";
-            case 0: //home
+                break;
+            case "home": //home
             default:
                 apiBase = "home_timeline";
                 break;
@@ -69,6 +75,7 @@ public class TwitterClient extends OAuthBaseClient {
         if (!maxId.isEmpty()) {
             params.put("max_id", maxId);
         }
+        Log.i("timeline params", params.toString());
         getClient().get(url, params, handler);
     }
 

@@ -51,6 +51,27 @@ public class Tweet extends Model implements Serializable{
     @Column(name = "retweeteable")
     private Boolean retweeteable;
 
+    @Column(name = "retweetCount")
+    private long retweetCount;
+
+    @Column(name = "favorite_count")
+    private long favoriteCount;
+
+    public long getRetweetCount() {
+        return retweetCount;
+    }
+
+    public void setRetweetCount(long retweetCount) {
+        this.retweetCount = retweetCount;
+    }
+
+    public long getFavoriteCount() {
+        return favoriteCount;
+    }
+
+    public void setFavoriteCount(long favoriteCount) {
+        this.favoriteCount = favoriteCount;
+    }
 
     public void setRetweeteable(Boolean retweeteable) {
         this.retweeteable = retweeteable;
@@ -135,6 +156,8 @@ public class Tweet extends Model implements Serializable{
             tweet.idString = jsonObject.getString("id_str");
             tweet.retweeted = jsonObject.getBoolean("retweeted");
             tweet.favorited = jsonObject.getBoolean("favorited");
+            tweet.favoriteCount = jsonObject.getLong("favorite_count");
+            tweet.retweetCount = jsonObject.getLong("retweet_count");
             tweet.urls = new ArrayList<>();
             tweet.retweeteable = true;
             JSONObject entities = jsonObject.getJSONObject("entities");
@@ -157,10 +180,10 @@ public class Tweet extends Model implements Serializable{
                 JSONObject json = jsonArray.getJSONObject(i);
                 Tweet tweet = Tweet.fromJSON(json);
                 if (tweet != null) {
-                    Log.i("afddafsf", String.valueOf(uid) + " " + String.valueOf(tweet.getUser().getUid()));
                     if (tweet.getUser().getUid() == uid) {
                         tweet.retweeteable = false;
                     }
+                    Log.i("Compare uid", String.valueOf(tweet.retweeteable) + " " + String.valueOf(uid) + " " + String.valueOf(tweet.getUser().getUid()));
                     tweet.saveAllProperties();
                     tweets.add(tweet);
                 }

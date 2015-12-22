@@ -51,10 +51,6 @@
             android:name=".activities.TimelineActivity"
             android:label="@string/title_activity_timeline" >
         </activity>
-        <activity
-            android:name=".activities.TweetActivity"
-            android:label="@string/title_activity_tweet" >
-        </activity>
     </application>
 
 </manifest>

@@ -1,7 +1,5 @@
 package idlycyme.practice.apps.twitter.adapters;
 
-import android.content.Context;
-import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,14 +15,16 @@ import java.util.List;
 
 import idlycyme.practice.apps.twitter.R;
 import idlycyme.practice.apps.twitter.models.Tweet;
+import idlycyme.practice.apps.twitter.templates.TimelineFragment;
 
 /**
  * Created by cyme on 9/2/15.
  */
 public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
-
-    public TweetsArrayAdapter(Context context, List<Tweet> tweets) {
-        super(context, android.R.layout.simple_list_item_1, tweets);
+    private TimelineFragment fragment;
+    public TweetsArrayAdapter(TimelineFragment fm, List<Tweet> tweets) {
+        super(fm.getContext(), android.R.layout.simple_list_item_1, tweets);
+        fragment = fm;
     }
 
     @Override
@@ -35,11 +35,11 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
         }
         // button click listener
         ImageButton ibReply = (ImageButton)convertView.findViewById(R.id.ibReply);
-        ibReply.setOnClickListener((View.OnClickListener) getContext());
+        ibReply.setOnClickListener((View.OnClickListener)fragment);
         ibReply.setTag(position);
 
         ImageButton ibFavorite = (ImageButton)convertView.findViewById(R.id.ibFavorite);
-        ibFavorite.setOnClickListener((View.OnClickListener) getContext());
+        ibFavorite.setOnClickListener((View.OnClickListener) fragment);
         ibFavorite.setTag(position);
         if (tweet.getFavorited()) {
             ibFavorite.setImageResource(R.drawable.ic_favorite_on);
@@ -48,11 +48,15 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
         }
 
         ImageButton ibRetweet = (ImageButton)convertView.findViewById(R.id.ibRetweet);
-        ibRetweet.setOnClickListener((View.OnClickListener) getContext());
+        ibRetweet.setOnClickListener((View.OnClickListener) fragment);
         ibRetweet.setTag(position);
+
         if (tweet.getRetweeteable() == false) {
             ibRetweet.setEnabled(false);
-        } else if (tweet.getRetweeted()) {
+        } else {
+            ibRetweet.setEnabled(true);
+        }
+        if (tweet.getRetweeted()) {
             ibRetweet.setImageResource(R.drawable.ic_retweet_on);
         } else {
             ibRetweet.setImageResource(R.drawable.ic_retweet);

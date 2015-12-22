@@ -1,6 +1,5 @@
 package idlycyme.practice.apps.twitter.libraries;
 
-import android.util.Log;
 import android.widget.AbsListView;
 
 /**
