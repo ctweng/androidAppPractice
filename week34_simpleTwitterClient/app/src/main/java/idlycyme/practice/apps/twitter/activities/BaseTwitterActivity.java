@@ -4,19 +4,18 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import com.activeandroid.query.Select;
 import com.loopj.android.http.JsonHttpResponseHandler;
+
 import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.util.ArrayList;
-import java.util.List;
+
 
 import idlycyme.practice.apps.twitter.TwitterApplication;
 import idlycyme.practice.apps.twitter.libraries.TwitterClient;
 import idlycyme.practice.apps.twitter.models.Tweet;
 import idlycyme.practice.apps.twitter.models.User;
-import idlycyme.practice.apps.twitter.templates.TimelineFragment;
 
 
 /**
@@ -63,20 +62,6 @@ public class BaseTwitterActivity extends AppCompatActivity {
         } else {
             client.postFavorite(new JsonHttpResponseHandler(), idToReply);
         }
-    }
-
-    public void onLoadCacheData(TimelineFragment fragment) {
-        ArrayList tweets = new ArrayList<>();
-        List<Tweet> cachedTweets = new Select().from(Tweet.class).orderBy("createdAt DESC").limit(limit).execute();
-        if (cachedTweets != null && cachedTweets.size() > 0) {
-            tweets.addAll(cachedTweets);
-        }
-        // quite ugly, need to refractor
-        fragment.lastTweetId = "";
-        fragment.aTweets.clear();
-        fragment.aTweets.addAll(tweets);
-        fragment.aTweets.notifyDataSetChanged();
-        fragment.esListener.onLoadMore();
     }
 
     public void didLoadDataSuccess(ArrayList<Tweet> tweet, String type) {
