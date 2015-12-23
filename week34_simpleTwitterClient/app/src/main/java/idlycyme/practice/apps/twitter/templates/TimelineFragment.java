@@ -34,11 +34,10 @@ public class TimelineFragment extends Fragment implements AdapterView.OnItemClic
     private String mType;
 
     public TweetsArrayAdapter aTweets;
-    private ArrayList<Tweet> tweets;
     public ListView lvTweets;
     public EndlessScrollListener esListener;
     public SwipeRefreshLayout swipeContainer;
-    private String lastTweetId = "";
+    public String lastTweetId = "";
 
     public static TimelineFragment newInstance(int position, String type) {
         Bundle args = new Bundle();
@@ -66,10 +65,12 @@ public class TimelineFragment extends Fragment implements AdapterView.OnItemClic
             }
         };
 
-
         // setup ui content
-        tweets = new ArrayList<>();
-        aTweets = new TweetsArrayAdapter(this, tweets);
+        aTweets = new TweetsArrayAdapter(this, new ArrayList());
+
+        if (mType.equals("home")) {
+            ((TimelineActivity)getActivity()).onLoadCacheData(this);
+        }
     }
 
     @Override
@@ -109,14 +110,14 @@ public class TimelineFragment extends Fragment implements AdapterView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         FragmentManager fm = getActivity().getSupportFragmentManager();
-        TweetDetailFragment tcfReply = TweetDetailFragment.newInstance(tweets.get(i));
+        TweetDetailFragment tcfReply = TweetDetailFragment.newInstance(aTweets.getItem(i));
         tcfReply.show(fm, "fragment_tweet_detail");
     }
 
     @Override
     public void onClick(View view) {
         int position = (Integer)view.getTag();
-        Tweet tweet = tweets.get(position);
+        Tweet tweet = aTweets.getItem(position);
         String id = tweet.getIdString();
         switch (view.getId()) {
             case  R.id.ibReply:
@@ -145,6 +146,7 @@ public class TimelineFragment extends Fragment implements AdapterView.OnItemClic
 
         if (lastTweetId == null || lastTweetId.equals("")) {
             aTweets.clear();
+            aTweets.notifyDataSetChanged();
         }
 
         if (lastTweetId != null && lastTweetId.length() > 0 && tweets.get(tweets.size() - 1).getIdString().equals(lastTweetId) == true) {
@@ -152,6 +154,7 @@ public class TimelineFragment extends Fragment implements AdapterView.OnItemClic
         } else {
             lastTweetId = tweets.get(tweets.size() - 1).getIdString();
             aTweets.addAll(tweets);
+            aTweets.notifyDataSetChanged();
         }
     }
 

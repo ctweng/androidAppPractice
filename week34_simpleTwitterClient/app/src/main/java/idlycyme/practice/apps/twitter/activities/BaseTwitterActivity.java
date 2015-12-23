@@ -67,11 +67,16 @@ public class BaseTwitterActivity extends AppCompatActivity {
 
     public void onLoadCacheData(TimelineFragment fragment) {
         ArrayList tweets = new ArrayList<>();
-        List<Tweet> cachedTweets = new Select().from(Tweet.class).orderBy("createdAt DESC").limit(20).execute();
+        List<Tweet> cachedTweets = new Select().from(Tweet.class).orderBy("createdAt DESC").limit(limit).execute();
         if (cachedTweets != null && cachedTweets.size() > 0) {
             tweets.addAll(cachedTweets);
         }
+        // quite ugly, need to refractor
+        fragment.lastTweetId = "";
+        fragment.aTweets.clear();
         fragment.aTweets.addAll(tweets);
+        fragment.aTweets.notifyDataSetChanged();
+        fragment.esListener.onLoadMore();
     }
 
     public void didLoadDataSuccess(ArrayList<Tweet> tweet, String type) {
