@@ -108,6 +108,7 @@ public class TweetDetailFragment extends DialogFragment implements View.OnClickL
     @Override
     public void onClick(View view) {
         String id = tweet.getIdString();
+        ImageButton button = (ImageButton)view;
         switch (view.getId()) {
             case  R.id.ibDetailReply:
                 ((TimelineActivity)getActivity()).onReply(tweet);
@@ -115,13 +116,22 @@ public class TweetDetailFragment extends DialogFragment implements View.OnClickL
                 break;
             case R.id.ibDetailFavorite:
                 ((TimelineActivity)getActivity()).onFavorite(id, tweet.getFavorited());
-
-                ImageButton button = (ImageButton)view;
-                button.setImageResource(R.drawable.ic_favorite_on);
+                tweet.setFavorited(!tweet.getFavorited());
+                if (tweet.getFavorited()) {
+                    button.setImageResource(R.drawable.ic_favorite_on);
+                } else {
+                    button.setImageResource(R.drawable.ic_favorite);
+                }
 
                 break;
             case R.id.ibDetailRetweet:
                 ((TimelineActivity)getActivity()).onFavorite(id, tweet.getRetweeted());
+                tweet.setRetweeted(!tweet.getRetweeted());
+                if (tweet.getRetweeted()) {
+                    button.setImageResource(R.drawable.ic_retweet_on);
+                } else {
+                    button.setImageResource(R.drawable.ic_retweet);
+                }
 
                 break;
             default:

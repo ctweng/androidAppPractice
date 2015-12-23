@@ -119,6 +119,7 @@ public class TimelineFragment extends Fragment implements AdapterView.OnItemClic
         int position = (Integer)view.getTag();
         Tweet tweet = aTweets.getItem(position);
         String id = tweet.getIdString();
+        ImageButton button = (ImageButton)view;
         switch (view.getId()) {
             case  R.id.ibReply:
                 ((TimelineActivity)getActivity()).onReply(tweet);
@@ -126,13 +127,22 @@ public class TimelineFragment extends Fragment implements AdapterView.OnItemClic
                 break;
             case R.id.ibFavorite:
                 ((TimelineActivity)getActivity()).onFavorite(id, tweet.getFavorited());
-
-                ImageButton button = (ImageButton)view;
-                button.setImageResource(R.drawable.ic_favorite_on);
+                tweet.setFavorited(!tweet.getFavorited());
+                if (tweet.getFavorited()) {
+                    button.setImageResource(R.drawable.ic_favorite_on);
+                } else {
+                    button.setImageResource(R.drawable.ic_favorite);
+                }
 
                 break;
             case R.id.ibRetweet:
                 ((TimelineActivity)getActivity()).onRetweet(id, tweet.getRetweeted());
+                tweet.setRetweeted(!tweet.getRetweeted());
+                if (tweet.getRetweeted()) {
+                    button.setImageResource(R.drawable.ic_retweet_on);
+                } else {
+                    button.setImageResource(R.drawable.ic_retweet);
+                }
 
                 break;
             default:

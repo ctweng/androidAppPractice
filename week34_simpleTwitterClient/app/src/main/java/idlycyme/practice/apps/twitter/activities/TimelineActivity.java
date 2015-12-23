@@ -3,11 +3,13 @@ package idlycyme.practice.apps.twitter.activities;
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ProgressBar;
 
 import com.activeandroid.query.Select;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -32,6 +34,7 @@ public class TimelineActivity extends BaseTwitterActivity implements TweetCompos
     private TweetComposeFragment tcfReply;
     private String titleMapForPageIndex[] = new String[] {"Home", "Mentions", "Profile"};
     private String apiMapForPageIndex[] = new String[] {"home", "mentions", "user"};
+    private MenuItem miActionProgressItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +56,9 @@ public class TimelineActivity extends BaseTwitterActivity implements TweetCompos
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_timeline, menu);
+        miActionProgressItem = menu.findItem(R.id.miActionProgress);
+        // Extract the action-view from the menu item
+        ProgressBar v =  (ProgressBar) MenuItemCompat.getActionView(miActionProgressItem);
         return true;
     }
 
@@ -82,8 +88,9 @@ public class TimelineActivity extends BaseTwitterActivity implements TweetCompos
 
     public void onComposeDone(String text, String idToReply) {
         tcfReply.dismiss();
+        willMakeRequest();
         getTimelineFragmentForType("home").didPostTweet(createPostedTweet(text));
-        client.postTweet(new JsonHttpResponseHandler(), text, idToReply);
+        client.postTweet(getJsonHttpResponseHandler(), text, idToReply);
     }
 
     private Tweet createPostedTweet(String text) {
@@ -159,4 +166,19 @@ public class TimelineActivity extends BaseTwitterActivity implements TweetCompos
         }
     }
 
+    @Override
+    public void willMakeRequest() {
+        // Show progress item
+        if (miActionProgressItem != null) {
+            miActionProgressItem.setVisible(true);
+        }
+    }
+
+    @Override
+    public void didMakeRequest() {
+        // Hide progress item
+        if (miActionProgressItem != null) {
+            miActionProgressItem.setVisible(false);
+        }
+    }
 }

@@ -46,10 +46,11 @@ public class BaseTwitterActivity extends AppCompatActivity {
         if (idToRetweet == null || idToRetweet.length() == 0) {
             return;
         }
+        willMakeRequest();
         if (undo) {
-            client.deleteTweet(new JsonHttpResponseHandler(), idToRetweet);
+            client.deleteTweet(getJsonHttpResponseHandler(), idToRetweet);
         } else {
-            client.postRetweet(new JsonHttpResponseHandler(), idToRetweet);
+            client.postRetweet(getJsonHttpResponseHandler(), idToRetweet);
         }
     }
 
@@ -57,11 +58,36 @@ public class BaseTwitterActivity extends AppCompatActivity {
         if (idToReply == null || idToReply.length() == 0) {
             return;
         }
+        willMakeRequest();
         if (undo) {
-            client.deleteFavorite(new JsonHttpResponseHandler(), idToReply);
+            client.deleteFavorite(getJsonHttpResponseHandler(), idToReply);
         } else {
-            client.postFavorite(new JsonHttpResponseHandler(), idToReply);
+            client.postFavorite(getJsonHttpResponseHandler(), idToReply);
         }
+    }
+
+    public JsonHttpResponseHandler getJsonHttpResponseHandler() {
+        return new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject jsonObject) {
+                super.onSuccess(statusCode, headers, jsonObject);
+                didMakeRequest();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+                didMakeRequest();
+            }
+        };
+    }
+
+    public void willMakeRequest() {
+
+    }
+
+    public void didMakeRequest() {
+
     }
 
     public void didLoadDataSuccess(ArrayList<Tweet> tweet, String type) {
@@ -74,10 +100,12 @@ public class BaseTwitterActivity extends AppCompatActivity {
 
     public void onLoadData(String lastTweetId, final String type) {
         Log.i("type is ", String.valueOf(type) + "  last tweet id is " + lastTweetId);
+        willMakeRequest();
         client.getTimeline(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray jsonArray) {
                 //super.onSuccess(statusCode, headers, json);
+                didMakeRequest();
                 ArrayList<Tweet> tweets;
                 if (loggedInUser != null) {
                     tweets = Tweet.fromJSONArrayAddRetweeteable(jsonArray, loggedInUser.getUid());
@@ -89,6 +117,7 @@ public class BaseTwitterActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                didMakeRequest();
                 didLoadDataFailure(errorResponse, type);
                 Log.d("getHomeTimeline failed", errorResponse.toString());
             }
