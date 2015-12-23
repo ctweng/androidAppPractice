@@ -11,4 +11,5 @@ import idlycyme.practice.apps.twitter.models.Tweet;
 public interface TwitterActionDelegate {
     void didLoadData(ArrayList<Tweet> tweets);
     void didLoadDataFailure(JSONObject errorResponse);
+    void didPostTweet(Tweet tweet);
 }

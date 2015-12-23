@@ -162,4 +162,12 @@ public class TimelineFragment extends Fragment implements AdapterView.OnItemClic
     public void didLoadDataFailure(JSONObject errorResponse) {
         swipeContainer.setRefreshing(false);
     }
+
+    @Override
+    public void didPostTweet(Tweet tweet) {
+        aTweets.insert(tweet, 0);
+        aTweets.notifyDataSetChanged();
+    }
+
+
 }

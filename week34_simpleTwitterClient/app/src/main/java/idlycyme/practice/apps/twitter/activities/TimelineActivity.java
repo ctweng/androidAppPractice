@@ -14,7 +14,9 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import idlycyme.practice.apps.twitter.R;
@@ -80,7 +82,11 @@ public class TimelineActivity extends BaseTwitterActivity implements TweetCompos
 
     public void onComposeDone(String text, String idToReply) {
         tcfReply.dismiss();
-        /*
+        getTimelineFragmentForType("home").didPostTweet(createPostedTweet(text));
+        client.postTweet(new JsonHttpResponseHandler(), text, idToReply);
+    }
+
+    private Tweet createPostedTweet(String text) {
         Tweet newTweet = new Tweet();
         newTweet.setUser(loggedInUser);
         newTweet.setBody(text);
@@ -88,10 +94,7 @@ public class TimelineActivity extends BaseTwitterActivity implements TweetCompos
         newTweet.setFavorited(false);
         newTweet.setRetweeted(false);
         newTweet.setRetweeteable(false);
-        getCurrentFragment().aTweets.insert(newTweet, 0);
-        getCurrentFragment().aTweets.notifyDataSetChanged();
-*/
-        client.postTweet(new JsonHttpResponseHandler(), text, idToReply);
+        return newTweet;
     }
 
     private TimelineFragment getFragment(int type) {
