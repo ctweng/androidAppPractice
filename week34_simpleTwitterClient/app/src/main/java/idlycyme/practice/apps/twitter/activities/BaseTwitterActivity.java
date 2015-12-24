@@ -1,8 +1,12 @@
 package idlycyme.practice.apps.twitter.activities;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -46,6 +50,9 @@ public class BaseTwitterActivity extends AppCompatActivity {
         if (idToRetweet == null || idToRetweet.length() == 0) {
             return;
         }
+        if (!isNetworkAvailable(true)) {
+            return;
+        }
         willMakeRequest();
         if (undo) {
             client.deleteTweet(getJsonHttpResponseHandler(), idToRetweet);
@@ -55,6 +62,9 @@ public class BaseTwitterActivity extends AppCompatActivity {
     }
 
     public void onFavorite(String idToReply, Boolean undo) {
+        if (!isNetworkAvailable(true)) {
+            return;
+        }
         if (idToReply == null || idToReply.length() == 0) {
             return;
         }
@@ -100,6 +110,9 @@ public class BaseTwitterActivity extends AppCompatActivity {
 
     public void onLoadData(String lastTweetId, final String type) {
         Log.i("type is ", String.valueOf(type) + "  last tweet id is " + lastTweetId);
+        if (!isNetworkAvailable(true)) {
+            return;
+        }
         willMakeRequest();
         client.getTimeline(new JsonHttpResponseHandler() {
             @Override
@@ -119,8 +132,24 @@ public class BaseTwitterActivity extends AppCompatActivity {
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 didMakeRequest();
                 didLoadDataFailure(errorResponse, type);
-                Log.d("getHomeTimeline failed", errorResponse.toString());
+                if (errorResponse != null) {
+                    Log.d("getHomeTimeline failed", errorResponse.toString());
+                }
             }
         }, lastTweetId, limit, type);
+    }
+
+    public Boolean isNetworkAvailable(boolean showToast) {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        boolean available = activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
+        if (showToast && !available) {
+            Toast.makeText(getBaseContext(), "Network is not available", Toast.LENGTH_LONG).show();
+            Log.i("make toast", "network gg");
+        }
+
+        Log.i("network status ", String.valueOf(available));
+        return available;
     }
 }

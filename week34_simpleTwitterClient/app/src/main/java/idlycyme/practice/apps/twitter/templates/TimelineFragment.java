@@ -17,6 +17,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import idlycyme.practice.apps.twitter.R;
+import idlycyme.practice.apps.twitter.activities.BaseTwitterActivity;
 import idlycyme.practice.apps.twitter.activities.TimelineActivity;
 import idlycyme.practice.apps.twitter.adapters.TweetsArrayAdapter;
 import idlycyme.practice.apps.twitter.libraries.EndlessScrollListener;
@@ -95,6 +96,10 @@ public class TimelineFragment extends Fragment implements AdapterView.OnItemClic
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh(){
+                if (!((BaseTwitterActivity)getActivity()).isNetworkAvailable(true)) {
+                    swipeContainer.setRefreshing(false);
+                    return;
+                }
                 lastTweetId = "";
                 ((TimelineActivity)getActivity()).onLoadData(lastTweetId, mType);
             }
@@ -116,6 +121,9 @@ public class TimelineFragment extends Fragment implements AdapterView.OnItemClic
 
     @Override
     public void onClick(View view) {
+        if (!((BaseTwitterActivity)getActivity()).isNetworkAvailable(true)) {
+            return;
+        }
         int position = (Integer)view.getTag();
         Tweet tweet = aTweets.getItem(position);
         String id = tweet.getIdString();

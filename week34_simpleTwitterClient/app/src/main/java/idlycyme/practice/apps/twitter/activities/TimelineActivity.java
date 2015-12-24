@@ -88,6 +88,9 @@ public class TimelineActivity extends BaseTwitterActivity implements TweetCompos
 
     public void onComposeDone(String text, String idToReply) {
         tcfReply.dismiss();
+        if (!isNetworkAvailable(true)) {
+            return;
+        }
         willMakeRequest();
         getTimelineFragmentForType("home").didPostTweet(createPostedTweet(text));
         client.postTweet(getJsonHttpResponseHandler(), text, idToReply);
@@ -181,4 +184,5 @@ public class TimelineActivity extends BaseTwitterActivity implements TweetCompos
             miActionProgressItem.setVisible(false);
         }
     }
+
 }

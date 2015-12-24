@@ -13,6 +13,7 @@ import com.squareup.picasso.Picasso;
 
 
 import idlycyme.practice.apps.twitter.R;
+import idlycyme.practice.apps.twitter.activities.BaseTwitterActivity;
 import idlycyme.practice.apps.twitter.activities.TimelineActivity;
 import idlycyme.practice.apps.twitter.libraries.TwitterActionDelegate;
 import idlycyme.practice.apps.twitter.models.Tweet;
@@ -107,6 +108,9 @@ public class TweetDetailFragment extends DialogFragment implements View.OnClickL
 
     @Override
     public void onClick(View view) {
+        if (!((BaseTwitterActivity)getActivity()).isNetworkAvailable(true)) {
+            return;
+        }
         String id = tweet.getIdString();
         ImageButton button = (ImageButton)view;
         switch (view.getId()) {
