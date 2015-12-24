@@ -29,9 +29,8 @@ import idlycyme.practice.apps.twitter.models.User;
 import idlycyme.practice.apps.twitter.templates.TimelineFragment;
 import idlycyme.practice.apps.twitter.templates.TweetComposeFragment;
 
-public class TimelineActivity extends BaseTwitterActivity implements TweetComposeFragment.OnComposeDoneListener {
+public class TimelineActivity extends BaseTwitterActivity {
     private ViewPager viewPager;
-    private TweetComposeFragment tcfReply;
     private String titleMapForPageIndex[] = new String[] {"Home", "Mentions", "Profile"};
     private String apiMapForPageIndex[] = new String[] {"home", "mentions", "user"};
     private MenuItem miActionProgressItem;
@@ -86,6 +85,8 @@ public class TimelineActivity extends BaseTwitterActivity implements TweetCompos
         return super.onOptionsItemSelected(item);
     }
 
+    // dupcliate code, need to refractor
+    @Override
     public void onComposeDone(String text, String idToReply) {
         tcfReply.dismiss();
         if (!isNetworkAvailable(true)) {
@@ -128,12 +129,6 @@ public class TimelineActivity extends BaseTwitterActivity implements TweetCompos
         fragment.esListener.onLoadMore();
     }
 
-    public void onReply(Tweet tweet) {
-        FragmentManager fm = getSupportFragmentManager();
-        tcfReply = TweetComposeFragment.newInstance(loggedInUser, tweet);
-        tcfReply.show(fm, "fragment_edit_name");
-    }
-
     private int getPageIndexByType(String type) {
         for (int i=0; i<apiMapForPageIndex.length; i++) {
             if (apiMapForPageIndex[i].equals(type)) {
@@ -169,7 +164,7 @@ public class TimelineActivity extends BaseTwitterActivity implements TweetCompos
         }
     }
 
-    @Override
+
     public void willMakeRequest() {
         // Show progress item
         if (miActionProgressItem != null) {
@@ -177,7 +172,6 @@ public class TimelineActivity extends BaseTwitterActivity implements TweetCompos
         }
     }
 
-    @Override
     public void didMakeRequest() {
         // Hide progress item
         if (miActionProgressItem != null) {

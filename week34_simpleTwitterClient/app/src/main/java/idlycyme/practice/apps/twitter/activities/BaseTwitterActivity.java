@@ -1,11 +1,17 @@
 package idlycyme.practice.apps.twitter.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -16,25 +22,28 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 
+import idlycyme.practice.apps.twitter.R;
 import idlycyme.practice.apps.twitter.TwitterApplication;
 import idlycyme.practice.apps.twitter.libraries.TwitterClient;
 import idlycyme.practice.apps.twitter.models.Tweet;
 import idlycyme.practice.apps.twitter.models.User;
+import idlycyme.practice.apps.twitter.templates.TweetComposeFragment;
 
 
 /**
  * Created by cyme on 12/22/15.
  */
-public class BaseTwitterActivity extends AppCompatActivity {
+public class BaseTwitterActivity extends AppCompatActivity implements TweetComposeFragment.OnComposeDoneListener {
     protected TwitterClient client;
     protected User loggedInUser;
+    protected TweetComposeFragment tcfReply;
     protected int limit = 20;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        loggedInUser = (User)getIntent().getSerializableExtra("loggedInUser");
+        loggedInUser = (User) getIntent().getSerializableExtra("loggedInUser");
         client = TwitterApplication.getRestClient();
         if (loggedInUser == null) {
             client.getLoggedInCredential(new JsonHttpResponseHandler() {
@@ -151,5 +160,26 @@ public class BaseTwitterActivity extends AppCompatActivity {
 
         Log.i("network status ", String.valueOf(available));
         return available;
+    }
+
+    public void onReply(Tweet tweet) {
+        FragmentManager fm = getSupportFragmentManager();
+        tcfReply = TweetComposeFragment.newInstance(loggedInUser, tweet);
+        tcfReply.show(fm, "fragment_edit_name");
+    }
+
+    public void onProfileImage(User user) {
+        Intent intent = new Intent(this, ProfileActivity.class);
+        intent.putExtra("user", user);
+        startActivity(intent);
+    }
+
+    public void onComposeDone(String text, String idToReply) {
+        tcfReply.dismiss();
+        if (!isNetworkAvailable(true)) {
+            return;
+        }
+        willMakeRequest();
+        client.postTweet(getJsonHttpResponseHandler(), text, idToReply);
     }
 }

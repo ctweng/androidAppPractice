@@ -1,5 +1,7 @@
 package idlycyme.practice.apps.twitter.adapters;
 
+import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,9 +24,16 @@ import idlycyme.practice.apps.twitter.templates.TimelineFragment;
  */
 public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
     private TimelineFragment fragment;
+    private Activity activity;
+
     public TweetsArrayAdapter(TimelineFragment fm, List<Tweet> tweets) {
         super(fm.getContext(), android.R.layout.simple_list_item_1, tweets);
         fragment = fm;
+    }
+
+    public TweetsArrayAdapter(Activity activity, List<Tweet> tweets) {
+        super(activity, android.R.layout.simple_list_item_1, tweets);
+        this.activity = activity;
     }
 
     @Override
@@ -35,11 +44,19 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
         }
         // button click listener
         ImageButton ibReply = (ImageButton)convertView.findViewById(R.id.ibReply);
-        ibReply.setOnClickListener((View.OnClickListener)fragment);
+        if (fragment != null) {
+            ibReply.setOnClickListener(fragment);
+        } else {
+            ibReply.setOnClickListener((View.OnClickListener) activity);
+        }
         ibReply.setTag(position);
 
         ImageButton ibFavorite = (ImageButton)convertView.findViewById(R.id.ibFavorite);
-        ibFavorite.setOnClickListener((View.OnClickListener) fragment);
+        if (fragment != null) {
+            ibFavorite.setOnClickListener(fragment);
+        } else {
+            ibFavorite.setOnClickListener((View.OnClickListener) activity);
+        }
         ibFavorite.setTag(position);
         if (tweet.getFavorited()) {
             ibFavorite.setImageResource(R.drawable.ic_favorite_on);
@@ -48,7 +65,11 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
         }
 
         ImageButton ibRetweet = (ImageButton)convertView.findViewById(R.id.ibRetweet);
-        ibRetweet.setOnClickListener((View.OnClickListener) fragment);
+        if (fragment != null) {
+            ibRetweet.setOnClickListener(fragment);
+        } else {
+            ibRetweet.setOnClickListener((View.OnClickListener) activity);
+        }
         ibRetweet.setTag(position);
 
         if (tweet.getRetweeteable() == false) {
@@ -71,6 +92,13 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
         tvBody.setText(tweet.getBody());
         tvTimestamp.setText(tweet.getRelativeTimeAgo());
         ivProfileImage.setImageResource(android.R.color.transparent);
+
+        if (fragment != null) {
+            ivProfileImage.setOnClickListener(fragment);
+        } else {
+            ivProfileImage.setOnClickListener((View.OnClickListener) activity);
+        }
+        ivProfileImage.setTag(position);
         Picasso.with(getContext()).load(tweet.getUser().getProfileImageUrl()).into(ivProfileImage);
         return convertView;
     }

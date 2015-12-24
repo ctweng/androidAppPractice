@@ -41,7 +41,6 @@ public class TimelineFragmentPagerAdapter extends FragmentPagerAdapter {
             fragments.put(position, fragment);
             Log.i("----fragments", fragments.toString());
         }
-        Log.i("aaaa", fragment.toString());
         return fragment;
     }
 

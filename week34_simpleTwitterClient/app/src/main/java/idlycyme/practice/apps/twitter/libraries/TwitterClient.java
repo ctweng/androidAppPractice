@@ -37,22 +37,39 @@ public class TwitterClient extends OAuthBaseClient {
 	}
 
 	public void getHomeTimeline(AsyncHttpResponseHandler handler, String maxId, int count) {
-        _getTimelineCommon("home", handler, maxId, count);
+        _getTimelineCommon("home", handler, _getPaginationParams(maxId, count));
 	}
 
-    public void getUserTimeline(AsyncHttpResponseHandler handler, String maxId, int count) {
-        _getTimelineCommon("user", handler, maxId, count);
+    public void getUserTimeline(AsyncHttpResponseHandler handler, String screenname, String maxId, int count) {
+        RequestParams params = _getPaginationParams(maxId, count);
+        if (screenname != null && screenname.length() > 0) {
+            params.put("screen_name", screenname);
+        }
+        _getTimelineCommon("user", handler, params);
     }
 
     public void getMentionsTimeline(AsyncHttpResponseHandler handler, String maxId, int count) {
-        _getTimelineCommon("mentions", handler, maxId, count);
+        _getTimelineCommon("mentions", handler, _getPaginationParams(maxId, count));
     }
 
     public void getTimeline(AsyncHttpResponseHandler handler, String maxId, int count, String type) {
-        _getTimelineCommon(type, handler, maxId, count);
+        _getTimelineCommon(type, handler, _getPaginationParams(maxId, count));
     }
 
-    private void _getTimelineCommon(String type, AsyncHttpResponseHandler handler, String maxId, int count) {
+    private RequestParams _getPaginationParams(String maxId, int count) {
+        RequestParams params = new RequestParams();
+        if (count > TIMELINE_MAX_COUNT_EX || count < TIMELINE_MIN_COUNT_EX) {
+            count = TIMELINE_DEFAULT_COUNT;
+        }
+        params.put("count", count);
+        if (!maxId.isEmpty()) {
+            params.put("max_id", maxId);
+        }
+        return params;
+    }
+
+
+    private void _getTimelineCommon(String type, AsyncHttpResponseHandler handler, RequestParams params) {
         String apiBase = "";
         switch (type) {
             case "user": //user
@@ -67,14 +84,7 @@ public class TwitterClient extends OAuthBaseClient {
                 break;
         }
         String url = getApiUrl("statuses/" + apiBase + ".json");
-        RequestParams params = new RequestParams();
-        if (count > TIMELINE_MAX_COUNT_EX || count < TIMELINE_MIN_COUNT_EX) {
-            count = TIMELINE_DEFAULT_COUNT;
-        }
-        params.put("count", count);
-        if (!maxId.isEmpty()) {
-            params.put("max_id", maxId);
-        }
+
         Log.i("timeline params", params.toString());
         getClient().get(url, params, handler);
     }

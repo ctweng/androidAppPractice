@@ -2,6 +2,7 @@ package idlycyme.practice.apps.twitter.templates;
 
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,11 +12,8 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-
 import idlycyme.practice.apps.twitter.R;
 import idlycyme.practice.apps.twitter.activities.BaseTwitterActivity;
-import idlycyme.practice.apps.twitter.activities.TimelineActivity;
-import idlycyme.practice.apps.twitter.libraries.TwitterActionDelegate;
 import idlycyme.practice.apps.twitter.models.Tweet;
 
 /**
@@ -83,6 +81,7 @@ public class TweetDetailFragment extends DialogFragment implements View.OnClickL
 
         ImageView ivProfileImage = (ImageView)view.findViewById(R.id.ivDetailProfileImage);
         ivProfileImage.setImageResource(android.R.color.transparent);
+        ivProfileImage.setOnClickListener(this);
         Picasso.with(getContext()).load(tweet.getUser().getProfileImageUrl()).into(ivProfileImage);
 
         TextView tvUsername = (TextView)view.findViewById(R.id.tvDetailUsername);
@@ -112,14 +111,15 @@ public class TweetDetailFragment extends DialogFragment implements View.OnClickL
             return;
         }
         String id = tweet.getIdString();
-        ImageButton button = (ImageButton)view;
+        ImageButton button;
         switch (view.getId()) {
             case  R.id.ibDetailReply:
-                ((TimelineActivity)getActivity()).onReply(tweet);
+                ((BaseTwitterActivity)getActivity()).onReply(tweet);
 
                 break;
             case R.id.ibDetailFavorite:
-                ((TimelineActivity)getActivity()).onFavorite(id, tweet.getFavorited());
+                button = (ImageButton)view;
+                ((BaseTwitterActivity)getActivity()).onFavorite(id, tweet.getFavorited());
                 tweet.setFavorited(!tweet.getFavorited());
                 if (tweet.getFavorited()) {
                     button.setImageResource(R.drawable.ic_favorite_on);
@@ -129,13 +129,18 @@ public class TweetDetailFragment extends DialogFragment implements View.OnClickL
 
                 break;
             case R.id.ibDetailRetweet:
-                ((TimelineActivity)getActivity()).onFavorite(id, tweet.getRetweeted());
+                button = (ImageButton)view;
+                ((BaseTwitterActivity)getActivity()).onFavorite(id, tweet.getRetweeted());
                 tweet.setRetweeted(!tweet.getRetweeted());
                 if (tweet.getRetweeted()) {
                     button.setImageResource(R.drawable.ic_retweet_on);
                 } else {
                     button.setImageResource(R.drawable.ic_retweet);
                 }
+
+                break;
+            case R.id.ivDetailProfileImage:
+                ((BaseTwitterActivity)getActivity()).onProfileImage(tweet.getUser());
 
                 break;
             default:
