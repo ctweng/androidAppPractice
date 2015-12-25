@@ -91,6 +91,7 @@ public class TweetComposeFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
+        getDialog().setTitle("Write something...");
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_tweet_compose, container, false);
         ivProfile = (ImageView)view.findViewById(R.id.ivComposeAuthor);

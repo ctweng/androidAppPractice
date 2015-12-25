@@ -1,6 +1,7 @@
 package idlycyme.practice.apps.twitter.adapters;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import java.util.List;
 
 import idlycyme.practice.apps.twitter.R;
 import idlycyme.practice.apps.twitter.models.Tweet;
+import idlycyme.practice.apps.twitter.templates.SearchFragment;
 import idlycyme.practice.apps.twitter.templates.TimelineFragment;
 
 /**
@@ -24,7 +26,13 @@ import idlycyme.practice.apps.twitter.templates.TimelineFragment;
  */
 public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
     private TimelineFragment fragment;
+    private SearchFragment searchFragment;
     private Activity activity;
+
+    public TweetsArrayAdapter(SearchFragment fm, List<Tweet> tweets) {
+        super(fm.getContext(), android.R.layout.simple_list_item_1, tweets);
+        searchFragment = fm;
+    }
 
     public TweetsArrayAdapter(TimelineFragment fm, List<Tweet> tweets) {
         super(fm.getContext(), android.R.layout.simple_list_item_1, tweets);
@@ -46,6 +54,8 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
         ImageButton ibReply = (ImageButton)convertView.findViewById(R.id.ibReply);
         if (fragment != null) {
             ibReply.setOnClickListener(fragment);
+        } else if (searchFragment != null) {
+            ibReply.setOnClickListener(searchFragment);
         } else {
             ibReply.setOnClickListener((View.OnClickListener) activity);
         }
@@ -54,6 +64,8 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
         ImageButton ibFavorite = (ImageButton)convertView.findViewById(R.id.ibFavorite);
         if (fragment != null) {
             ibFavorite.setOnClickListener(fragment);
+        } else if (searchFragment != null) {
+            ibFavorite.setOnClickListener(searchFragment);
         } else {
             ibFavorite.setOnClickListener((View.OnClickListener) activity);
         }
@@ -67,6 +79,8 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
         ImageButton ibRetweet = (ImageButton)convertView.findViewById(R.id.ibRetweet);
         if (fragment != null) {
             ibRetweet.setOnClickListener(fragment);
+        } else if (searchFragment != null) {
+            ibRetweet.setOnClickListener(searchFragment);
         } else {
             ibRetweet.setOnClickListener((View.OnClickListener) activity);
         }
@@ -95,6 +109,8 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
 
         if (fragment != null) {
             ivProfileImage.setOnClickListener(fragment);
+        } else if (searchFragment != null) {
+            ivProfileImage.setOnClickListener(searchFragment);
         } else {
             ivProfileImage.setOnClickListener((View.OnClickListener) activity);
         }

@@ -7,6 +7,7 @@ import org.scribe.builder.api.Api;
 import org.scribe.builder.api.TwitterApi;
 
 import android.content.Context;
+import android.net.http.RequestHandle;
 import android.util.Log;
 
 import com.codepath.oauth.OAuthBaseClient;
@@ -14,6 +15,8 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 /*
@@ -218,13 +221,24 @@ public class TwitterClient extends OAuthBaseClient {
         getClient().get(url, handler);
     }
 
-    public void gestTweetByQuery(AsyncHttpResponseHandler handler, String query) {
+    public void getTweetsByQuery(AsyncHttpResponseHandler handler, String maxId, int count, String query) {
         String url = getApiUrl("search/tweets.json");
 
         RequestParams params = new RequestParams();
-        params.put("q", query);
+        //params.put("q", query); not work, don't know why
+        try {
+            query = URLEncoder.encode(query, "utf-8");
+            url += "?q=" + query;
+            params.put("count", count);
+            if (!maxId.isEmpty()) {
+                params.put("max_id", maxId);
+            }
+            Log.i("query ", params.toString());
+            getClient().get(url, handler);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
 
-        getClient().get(url, handler);
     }
 
 }

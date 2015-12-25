@@ -1,15 +1,20 @@
 package idlycyme.practice.apps.twitter.activities;
 
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.activeandroid.query.Select;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -26,14 +31,16 @@ import idlycyme.practice.apps.twitter.adapters.TimelineFragmentPagerAdapter;
 import idlycyme.practice.apps.twitter.libraries.TwitterClient;
 import idlycyme.practice.apps.twitter.models.Tweet;
 import idlycyme.practice.apps.twitter.models.User;
+import idlycyme.practice.apps.twitter.templates.SearchFragment;
 import idlycyme.practice.apps.twitter.templates.TimelineFragment;
 import idlycyme.practice.apps.twitter.templates.TweetComposeFragment;
 
 public class TimelineActivity extends BaseTwitterActivity {
     private ViewPager viewPager;
-    private String titleMapForPageIndex[] = new String[] {"Home", "Mentions", "Profile"};
-    private String apiMapForPageIndex[] = new String[] {"home", "mentions", "user"};
+    private String titleMapForPageIndex[] = new String[] {"Home", "Mentions"};
+    private String apiMapForPageIndex[] = new String[] {"home", "mentions"};
     private MenuItem miActionProgressItem;
+    private SearchFragment sfm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +65,40 @@ public class TimelineActivity extends BaseTwitterActivity {
         miActionProgressItem = menu.findItem(R.id.miActionProgress);
         // Extract the action-view from the menu item
         ProgressBar v =  (ProgressBar) MenuItemCompat.getActionView(miActionProgressItem);
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setIconifiedByDefault(false);
+        //searchView.setMaxWidth(200);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                // perform query here
+                if (query.equals("")) {
+                    Toast.makeText(getBaseContext(), "Please enter something to search", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+
+                Log.i("new query", query);
+                //Log.i("onQtwice", String.valueOf(onQueryTextSubmitTwice));
+                //if (onQueryTextSubmitTwice) {
+                //fetchSearchResults(query, 0);
+                sfm = SearchFragment.newInstance(query);
+                sfm.show(getSupportFragmentManager(), "search_fragment");
+
+                //}
+                searchView.setQuery("", false);
+                searchView.setQueryHint("Current search is " + query);
+                //onQueryTextSubmitTwice = !onQueryTextSubmitTwice;
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
         return true;
     }
 
@@ -140,7 +181,7 @@ public class TimelineActivity extends BaseTwitterActivity {
 
     private TimelineFragment getTimelineFragmentForType(String type) {
         int position = getPageIndexByType(type);
-        if (position >= apiMapForPageIndex.length) {
+        if (position >= getSupportFragmentManager().getFragments().size()) {
             return null;
         }
 
@@ -164,6 +205,16 @@ public class TimelineActivity extends BaseTwitterActivity {
         }
     }
 
+    @Override
+    public void didLoadSearchDataSuccess(ArrayList<Tweet> tweet, String type) {
+        sfm.didLoadData(tweet);
+    }
+
+    @Override
+    public void didLoadSearchDataFailure(JSONObject errorResponse, String type) {
+        sfm.didLoadDataFailure(errorResponse);
+    }
+
 
     public void willMakeRequest() {
         // Show progress item
@@ -178,5 +229,4 @@ public class TimelineActivity extends BaseTwitterActivity {
             miActionProgressItem.setVisible(false);
         }
     }
-
 }

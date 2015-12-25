@@ -55,8 +55,8 @@
         android:src="@drawable/ic_reply"
 
         android:layout_alignTop="@+id/ibRetweet"
-        android:layout_centerHorizontal="true"
-        android:layout_marginRight="30dp" />
+        android:layout_marginRight="30dp"
+        android:layout_toStartOf="@+id/ibFavorite" />
 
     <ImageButton
         android:layout_width="wrap_content"

@@ -1,7 +1,7 @@
 package idlycyme.practice.apps.twitter.templates;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
@@ -11,8 +11,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
-
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
 
@@ -27,15 +25,11 @@ import idlycyme.practice.apps.twitter.libraries.TwitterActionDelegate;
 import idlycyme.practice.apps.twitter.models.Tweet;
 
 /**
- * Created by cyme on 12/17/15.
+ * Created by cyme on 12/25/15.
  */
-public class TimelineFragment extends Fragment implements AdapterView.OnItemClickListener, View.OnClickListener, TwitterActionDelegate {
-    public static final String ARG_PAGE = "ARG_PAGE";
-    public static final String ARG_TYPE = "ARG_TYPE";
+public class SearchFragment extends DialogFragment implements AdapterView.OnItemClickListener, View.OnClickListener, TwitterActionDelegate {
     public static final String ARG_QUERY = "ARG_QUERY";
 
-    private int mPage;
-    private String mType;
     public String query = "";
 
     public TweetsArrayAdapter aTweets;
@@ -44,23 +38,10 @@ public class TimelineFragment extends Fragment implements AdapterView.OnItemClic
     public SwipeRefreshLayout swipeContainer;
     public String lastTweetId = "";
 
-    public static TimelineFragment newInstance(int position, String type) {
+    public static SearchFragment newInstance(String query) {
         Bundle args = new Bundle();
-        args.putString(ARG_TYPE, type);
-        args.putInt(ARG_PAGE, position);
-        args.putString(ARG_QUERY, "");
-        TimelineFragment fragment = new TimelineFragment();
-        fragment.setArguments(args);
-
-        return fragment;
-    }
-
-    public static TimelineFragment newInstance(String type, String query) {
-        Bundle args = new Bundle();
-        args.putString(ARG_TYPE, type);
-        args.putInt(ARG_PAGE, 0);
         args.putString(ARG_QUERY, query);
-        TimelineFragment fragment = new TimelineFragment();
+        SearchFragment fragment = new SearchFragment();
         fragment.setArguments(args);
 
         return fragment;
@@ -69,47 +50,34 @@ public class TimelineFragment extends Fragment implements AdapterView.OnItemClic
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mPage = getArguments().getInt(ARG_PAGE);
-        mType = getArguments().getString(ARG_TYPE);
         query = getArguments().getString(ARG_QUERY);
-        Log.i("--------------mpage---", String.valueOf(mPage));
 
         // setup load-more
         esListener = new EndlessScrollListener() {
             @Override
             public void onLoadMore() {
-                Log.i("on load more ", "in scroll listener " + mType);
-                if (mType.equals("search")) {
                     Log.i("load more for search", query);
                     if (query.length() > 0) {
                         ((TimelineActivity) getActivity()).onLoadSearchData(lastTweetId, query);
                     }
-                } else {
-                    Log.i("timeline", "load more");
-                    ((TimelineActivity) getActivity()).onLoadData(lastTweetId, mType);
-                }
             }
         };
 
         // setup ui content
         aTweets = new TweetsArrayAdapter(this, new ArrayList());
-
-        if (mType.equals("home")) {
-            ((TimelineActivity)getActivity()).onLoadCacheData(this);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_timeline, container, false);
-
+        getDialog().setTitle("Results for \"" + query + "\"");
         // setup pull-to-refresh
         setupPullToRefresh(view);
 
         lvTweets = (ListView)view.findViewById(R.id.lvTweets);
         lvTweets.setAdapter(aTweets);
-        lvTweets.setOnItemClickListener(TimelineFragment.this);
+        lvTweets.setOnItemClickListener(this);
         lvTweets.setOnScrollListener(esListener);
 
         return view;
@@ -126,7 +94,7 @@ public class TimelineFragment extends Fragment implements AdapterView.OnItemClic
                     return;
                 }
                 lastTweetId = "";
-                ((TimelineActivity)getActivity()).onLoadData(lastTweetId, mType);
+                ((TimelineActivity)getActivity()).onLoadSearchData(lastTweetId, query);
             }
         });
         // Configure the refreshing colors
@@ -218,6 +186,5 @@ public class TimelineFragment extends Fragment implements AdapterView.OnItemClic
         aTweets.insert(tweet, 0);
         aTweets.notifyDataSetChanged();
     }
-
 
 }

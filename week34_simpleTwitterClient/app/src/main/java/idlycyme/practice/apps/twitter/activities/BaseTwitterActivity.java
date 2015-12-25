@@ -18,6 +18,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.apache.http.Header;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
 
@@ -123,6 +124,7 @@ public class BaseTwitterActivity extends AppCompatActivity implements TweetCompo
             return;
         }
         willMakeRequest();
+
         client.getTimeline(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray jsonArray) {
@@ -146,6 +148,55 @@ public class BaseTwitterActivity extends AppCompatActivity implements TweetCompo
                 }
             }
         }, lastTweetId, limit, type);
+    }
+
+    public void onLoadSearchData(String lastTweetId, final String query) {
+        Log.i("q is ", String.valueOf(query) + "  last tweet id is " + lastTweetId);
+        if (!isNetworkAvailable(true)) {
+            return;
+        }
+        willMakeRequest();
+
+        client.getTweetsByQuery(new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject jsonObject) {
+                //super.onSuccess(statusCode, headers, json);
+                didMakeRequest();
+                JSONArray jsonArray = null;
+                try {
+                    jsonArray = jsonObject.getJSONArray("statuses");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                ArrayList<Tweet> tweets;
+                Log.i("jsonOBject", jsonObject.toString());
+                if (loggedInUser != null) {
+                    tweets = Tweet.fromJSONArrayAddRetweeteable(jsonArray, loggedInUser.getUid());
+                } else {
+                    tweets = Tweet.fromJSONArray(jsonArray);
+                }
+                didLoadSearchDataSuccess(tweets, "search");
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                didMakeRequest();
+                didLoadSearchDataFailure(errorResponse, "search");
+                Log.i("failed info", String.valueOf(statusCode) + " ");
+                if (errorResponse != null) {
+                    Log.d("search failed", errorResponse.toString());
+                }
+            }
+        }, lastTweetId, limit, query);
+    }
+
+
+    public void didLoadSearchDataSuccess(ArrayList<Tweet> tweet, String type) {
+
+    }
+
+    public void didLoadSearchDataFailure(JSONObject errorResponse, String type) {
+
     }
 
     public Boolean isNetworkAvailable(boolean showToast) {

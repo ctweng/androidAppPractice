@@ -6,14 +6,39 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".LoginActivity" >
+    tools:context=".LoginActivity"
+    android:background="#60dcf1">
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="20dp"
         android:onClick="loginToRest"
-        android:text="@string/login_label" />
+        android:text="@string/login_label"
+        android:layout_marginBottom="78dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="#ffffff"
+        android:id="@+id/button"
+        android:layout_marginRight="150dp" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ivLogo"
+        android:maxHeight="60dp"
+        android:maxWidth="60dp"
+        android:layout_centerInParent="true"
+        android:src="@drawable/ic_logo_white" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Simple Twitter Client"
+        android:id="@+id/tvAppName"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="150dp"
+        android:textColor="#ffffff"
+        android:textSize="@dimen/abc_text_size_large_material" />
 
 </RelativeLayout>
