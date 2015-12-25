@@ -175,6 +175,7 @@ public class TimelineFragment extends Fragment implements AdapterView.OnItemClic
         }
 
         if (lastTweetId != null && lastTweetId.length() > 0 && tweets.get(tweets.size() - 1).getIdString().equals(lastTweetId) == true) {
+            Log.i("no more data", lastTweetId);
             esListener.noMoreData = true;
         } else {
             lastTweetId = tweets.get(tweets.size() - 1).getIdString();

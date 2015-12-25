@@ -4,10 +4,12 @@ import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * Created by cyme on 9/2/15.
@@ -65,7 +67,7 @@ public class User extends Model implements Serializable {
             user.profileBackgroundUrl = jsonObject.getString("profile_background_image_url");
             user.followersCount = jsonObject.getInt("followers_count");
             user.friendsCount = jsonObject.getInt("friends_count");
-            user.listsCount = jsonObject.getInt("lists_count");
+            //user.listsCount = jsonObject.getInt("lists_count");
             user.description = jsonObject.getString("description");
 
         } catch (JSONException e) {
@@ -73,7 +75,19 @@ public class User extends Model implements Serializable {
         }
         return user;
     }
-
+    public static ArrayList<User> fromJSONArray(JSONArray jsonArray) {
+        ArrayList<User> users = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            try {
+                User user = User.fromJSON(jsonArray.getJSONObject(i));
+                users.add(user);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                continue;
+            }
+        }
+        return users;
+    }
     public String getName() {
         return name;
     }

@@ -1,5 +1,8 @@
 package idlycyme.practice.apps.twitter.libraries;
 
+import org.apache.http.Header;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.scribe.builder.api.Api;
 import org.scribe.builder.api.TwitterApi;
 
@@ -8,7 +11,10 @@ import android.util.Log;
 
 import com.codepath.oauth.OAuthBaseClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+
+import java.util.ArrayList;
 
 /*
  * 
@@ -156,12 +162,69 @@ public class TwitterClient extends OAuthBaseClient {
         getClient().post(url, handler);
     }
 
-	/* 1. Define the endpoint URL with getApiUrl and pass a relative path to the endpoint
-	 * 	  i.e getApiUrl("statuses/home_timeline.json");
-	 * 2. Define the parameters to pass to the request (query or body)
-	 *    i.e RequestParams params = new RequestParams("foo", "bar");
-	 * 3. Define the request method and make a call to the client
-	 *    i.e client.get(apiUrl, params, handler);
-	 *    i.e client.post(apiUrl, params, handler);
-	 */
+    public void getUserIds(AsyncHttpResponseHandler handler, long uid, String nextCursor, int count, String type) {
+        String url;
+        if (type.equals("friends")) {
+            url = getApiUrl("friends/ids.json");
+        } else {
+            url = getApiUrl("followers/ids.json");
+        }
+        RequestParams params = new RequestParams();
+        params.put("user_id", uid);
+        if (nextCursor.length() > 0) {
+            params.put("cursor", nextCursor);
+        } else {
+            params.put("cursor", -1);
+        }
+        params.put("count", count);
+
+        Log.i("params are ", params.toString());
+        getClient().get(url, handler);
+    }
+
+    public void getUserByIds(AsyncHttpResponseHandler handler, long[] uids) {
+        String url = getApiUrl("users/lookup.json");
+
+        String uidsString = "";
+        for(int i=0; i<uids.length; i++) {
+            uidsString += String.valueOf(uids[i]) + ",";
+        }
+        uidsString = uidsString.substring(0, uidsString.length()-1);
+
+        RequestParams params = new RequestParams();
+        params.put("user_id", uidsString);
+
+        getClient().post(url, handler);
+    }
+
+    public void getFriends(AsyncHttpResponseHandler handler, String screenname, String nextCursor, int count) {
+        String url = getApiUrl("friends/list.json");
+        _getUserLists(handler, screenname, nextCursor, count, url);
+    }
+
+    public void getFollowers(AsyncHttpResponseHandler handler, String screenname, String nextCursor, int count) {
+        String url = getApiUrl("followers/list.json");
+        _getUserLists(handler, screenname, nextCursor, count, url);
+    }
+
+    private void _getUserLists(AsyncHttpResponseHandler handler, String screenname, String nextCursor, int count, String url) {
+        RequestParams params = new RequestParams();
+        //params.put("screen_name", screenname);
+        params.put("count", count);
+        if (nextCursor.length() > 0) {
+            params.put("cursor", nextCursor);
+        }
+        Log.i("params are ", params.toString());
+        getClient().get(url, handler);
+    }
+
+    public void gestTweetByQuery(AsyncHttpResponseHandler handler, String query) {
+        String url = getApiUrl("search/tweets.json");
+
+        RequestParams params = new RequestParams();
+        params.put("q", query);
+
+        getClient().get(url, handler);
+    }
+
 }

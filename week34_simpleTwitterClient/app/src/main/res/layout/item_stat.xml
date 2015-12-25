@@ -1,46 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="9999"
-        android:id="@+id/tvNumber1"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="30dp" />
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:id="@+id/llSection1"
+        android:layout_weight="1">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="9999"
+            android:id="@+id/tvNumber1"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="30dp" />
 
-    <TextView
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Retweet"
+            android:id="@+id/tvTitle1"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/tvNumber1"
+            android:layout_toEndOf="@+id/tvNumber1"
+            android:layout_marginLeft="20dp" />
+    </LinearLayout>
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Retweet"
-        android:id="@+id/tvTitle1"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/tvNumber1"
-        android:layout_toEndOf="@+id/tvNumber1"
-        android:layout_marginLeft="20dp" />
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:id="@+id/llSection2"
+        android:layout_weight="1">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="9999"
+            android:id="@+id/tvNumber2"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/tvTitle1"
+            android:layout_toEndOf="@+id/tvTitle1"
+            android:layout_marginLeft="20dp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="9999"
-        android:id="@+id/tvNumber2"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/tvTitle1"
-        android:layout_toEndOf="@+id/tvTitle1"
-        android:layout_marginLeft="20dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Like"
-        android:id="@+id/tvTitle2"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/tvNumber2"
-        android:layout_toEndOf="@+id/tvNumber2"
-        android:layout_marginLeft="20dp" />
-
-</RelativeLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Like"
+            android:id="@+id/tvTitle2"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/tvNumber2"
+            android:layout_toEndOf="@+id/tvNumber2"
+            android:layout_marginLeft="20dp" />
+    </LinearLayout>
+</LinearLayout>

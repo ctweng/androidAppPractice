@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -17,18 +18,21 @@ import com.squareup.picasso.Picasso;
 
 import org.apache.http.Header;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 import idlycyme.practice.apps.twitter.R;
 import idlycyme.practice.apps.twitter.adapters.TweetsArrayAdapter;
+import idlycyme.practice.apps.twitter.adapters.UsersArrayAdapter;
 import idlycyme.practice.apps.twitter.libraries.EndlessScrollListener;
 import idlycyme.practice.apps.twitter.models.Tweet;
 import idlycyme.practice.apps.twitter.models.User;
 import idlycyme.practice.apps.twitter.templates.TimelineFragment;
 import idlycyme.practice.apps.twitter.templates.TweetComposeFragment;
 import idlycyme.practice.apps.twitter.templates.TweetDetailFragment;
+import idlycyme.practice.apps.twitter.templates.UserlistFragment;
 
 /**
  * Created by cyme on 12/24/15.
@@ -41,6 +45,7 @@ public class ProfileActivity extends BaseTwitterActivity implements AdapterView.
     private SwipeRefreshLayout swipeContainer;
     private String lastTweetId = "";
     private TweetComposeFragment tcfReply;
+    private UserlistFragment ufUserlist;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,20 +84,24 @@ public class ProfileActivity extends BaseTwitterActivity implements AdapterView.
     }
 
     private void setupItemProfileMainView() {
-        TextView tvScreenname = (TextView)findViewById(R.id.tvScreenname);
+        TextView tvScreenname = (TextView) findViewById(R.id.tvScreenname);
         tvScreenname.setText("@" + user.getScreenname());
 
-        TextView tvUsername = (TextView)findViewById(R.id.tvUsername);
+        TextView tvUsername = (TextView) findViewById(R.id.tvUsername);
         tvUsername.setText(user.getName());
 
-        TextView tvDescription = (TextView)findViewById(R.id.tvDescription);
+        TextView tvDescription = (TextView) findViewById(R.id.tvDescription);
         tvDescription.setText(user.getDescription());
 
-        ImageView ivProfile = (ImageView)findViewById(R.id.ivProfileImage);
+        ImageView ivProfile = (ImageView) findViewById(R.id.ivProfileImage);
         Picasso.with(this).load(user.getProfileImageUrl()).into(ivProfile);
 
-        ImageView ivBanner = (ImageView)findViewById(R.id.ivProfileBanner);
-        Picasso.with(this).load(user.getProfileBannerUrl()).into(ivBanner);
+        ImageView ivBanner = (ImageView) findViewById(R.id.ivProfileBanner);
+        if (user.getProfileBannerUrl() != null && user.getProfileBannerUrl().length() > 0) {
+            Picasso.with(this).load(user.getProfileBannerUrl()).into(ivBanner);
+        } else {
+            ivBanner.setVisibility(View.GONE);
+        }
     }
 
     private void setupItemStatView() {
@@ -107,6 +116,26 @@ public class ProfileActivity extends BaseTwitterActivity implements AdapterView.
 
         TextView tvNumber2 = (TextView)findViewById(R.id.tvNumber2);
         tvNumber2.setText(String.valueOf(user.getFollowersCount()));
+
+        LinearLayout llSection1 = (LinearLayout)findViewById(R.id.llSection1);
+        llSection1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(" user id is ", String.valueOf(user.getUid()));
+                FragmentManager fm = getSupportFragmentManager();
+                ufUserlist = UserlistFragment.newInstance(user, "friends");
+                ufUserlist.show(fm, "fragment_userlist");
+            }
+        });
+        LinearLayout llSection2 = (LinearLayout)findViewById(R.id.llSection2);
+        llSection2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager fm = getSupportFragmentManager();
+                ufUserlist = UserlistFragment.newInstance(user, "followers");
+                ufUserlist.show(fm, "fragment_userlist");
+            }
+        });
     }
 
     @Override
@@ -217,18 +246,21 @@ public class ProfileActivity extends BaseTwitterActivity implements AdapterView.
             return;
         }
         Log.i("on click listener","");
+
+        // timeline item
         int position = (Integer)view.getTag();
+
         Tweet tweet = aTweets.getItem(position);
         String id = tweet.getIdString();
         ImageButton button;
         switch (view.getId()) {
-            case  R.id.ibReply:
-               onReply(tweet);
+            case R.id.ibReply:
+                onReply(tweet);
 
                 break;
             case R.id.ibFavorite:
-                Log.i("on click listener"," favorite ");
-                button = (ImageButton)view;
+                Log.i("on click listener", " favorite ");
+                button = (ImageButton) view;
                 onFavorite(id, tweet.getFavorited());
                 tweet.setFavorited(!tweet.getFavorited());
                 if (tweet.getFavorited()) {
@@ -239,7 +271,7 @@ public class ProfileActivity extends BaseTwitterActivity implements AdapterView.
 
                 break;
             case R.id.ibRetweet:
-                button = (ImageButton)view;
+                button = (ImageButton) view;
                 onRetweet(id, tweet.getRetweeted());
                 tweet.setRetweeted(!tweet.getRetweeted());
                 if (tweet.getRetweeted()) {
@@ -255,7 +287,44 @@ public class ProfileActivity extends BaseTwitterActivity implements AdapterView.
                 break;
             default:
                 break;
+
         }
     }
 
+    public void onLoadUserLists(String type, User user, String cursor) {
+        JsonHttpResponseHandler handler = new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject jsonObject) {
+                //super.onSuccess(statusCode, headers, json);
+                JSONArray jsonArray = null;
+                try {
+                    ufUserlist.nextCursor = jsonObject.getString("next_cursor_str");
+                    jsonArray = jsonObject.getJSONArray("users");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Log.i("===", jsonObject.toString());
+                Log.i("--------", jsonArray.toString());
+                ArrayList<User> users = User.fromJSONArray(jsonArray);
+                ((UsersArrayAdapter) ufUserlist.aUsers).addAll(users);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject error) {
+                didMakeRequest();
+                Log.d("get friend failed", String.valueOf(statusCode) + " " + throwable.getMessage() + " " + error.toString());
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String message, Throwable throwable) {
+                didMakeRequest();
+                Log.d("get friend failed", String.valueOf(statusCode) + " " + throwable.getMessage() + " " + message);
+            }
+        };
+        if (type.equals("friends")) {
+            client.getFriends(handler, user.getScreenname(), cursor, 20);
+        } else {
+            client.getFollowers(handler, user.getScreenname(), cursor, 20);
+        }
+    }
 }

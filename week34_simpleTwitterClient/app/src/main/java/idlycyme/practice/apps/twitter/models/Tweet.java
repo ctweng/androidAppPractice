@@ -183,7 +183,7 @@ public class Tweet extends Model implements Serializable{
                     if (tweet.getUser().getUid() == uid) {
                         tweet.retweeteable = false;
                     }
-                    Log.i("Compare uid", String.valueOf(tweet.retweeteable) + " " + String.valueOf(uid) + " " + String.valueOf(tweet.getUser().getUid()));
+                    //Log.i("Compare uid", String.valueOf(tweet.retweeteable) + " " + String.valueOf(uid) + " " + String.valueOf(tweet.getUser().getUid()));
                     tweet.saveAllProperties();
                     tweets.add(tweet);
                 }

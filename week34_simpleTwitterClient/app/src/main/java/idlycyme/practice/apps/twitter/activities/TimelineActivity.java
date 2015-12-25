@@ -149,10 +149,10 @@ public class TimelineActivity extends BaseTwitterActivity {
     }
 
     @Override
-    public void didLoadDataSuccess(ArrayList<Tweet> tweet, String type) {
+    public void didLoadDataSuccess(ArrayList<Tweet> tweets, String type) {
         TimelineFragment fragment = getTimelineFragmentForType(type);
         if (fragment != null) {
-            fragment.didLoadData(tweet);
+            fragment.didLoadData(tweets);
         }
     }
 
