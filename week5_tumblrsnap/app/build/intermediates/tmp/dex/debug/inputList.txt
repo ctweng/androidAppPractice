@@ -1,0 +1,12 @@
+/Users/cyme/Desktop/andapp/androidAppPractice/week5_tumblrsnap/app/build/intermediates/classes/debug
+/Users/cyme/Desktop/andapp/androidAppPractice/week5_tumblrsnap/app/build/intermediates/pre-dexed/debug/support-annotations-23.1.0-b6feb09bba68002dc2778991541c36db79bfe48f.jar
+/Users/cyme/Desktop/andapp/androidAppPractice/week5_tumblrsnap/app/build/intermediates/pre-dexed/debug/codepath-utils-8c56a1fadb75be2a0fcd62447de23c3e221d5423.jar
+/Users/cyme/Desktop/andapp/androidAppPractice/week5_tumblrsnap/app/build/intermediates/pre-dexed/debug/codepath-android-view-helpers-0.1.0-88b61f261f1fc1ee950e4e9f0242bd2399a4caed.jar
+/Users/cyme/Desktop/andapp/androidAppPractice/week5_tumblrsnap/app/build/intermediates/pre-dexed/debug/codepath-oauth-0.2.3-d78f1b7d918af25e87c7b2397f23da6b213ab1fe.jar
+/Users/cyme/Desktop/andapp/androidAppPractice/week5_tumblrsnap/app/build/intermediates/pre-dexed/debug/android-async-http-1.4.3-23ec3ab0d3c9a65eb9857be38bed59421c7137fc.jar
+/Users/cyme/Desktop/andapp/androidAppPractice/week5_tumblrsnap/app/build/intermediates/pre-dexed/debug/universal-image-loader-1.8.4-ed69c4e44ad39e65d4142eb22cfd62896d02766b.jar
+/Users/cyme/Desktop/andapp/androidAppPractice/week5_tumblrsnap/app/build/intermediates/pre-dexed/debug/scribe-85defad931bd4f5f21ea4d53c67fa66507d3f6a6.jar
+/Users/cyme/Desktop/andapp/androidAppPractice/week5_tumblrsnap/app/build/intermediates/pre-dexed/debug/androidjhlabs-ecb3a7ce39ee300c83eb342acd8fb6cbd0b15151.jar
+/Users/cyme/Desktop/andapp/androidAppPractice/week5_tumblrsnap/app/build/intermediates/pre-dexed/debug/internal_impl-23.1.0-d5070bbe67886575809484efc357b64d307d8f2a.jar
+/Users/cyme/Desktop/andapp/androidAppPractice/week5_tumblrsnap/app/build/intermediates/pre-dexed/debug/classes-7c5322270e4dcb5cccfbe99ea1144189fcb6adfb.jar
+/Users/cyme/Desktop/andapp/androidAppPractice/week5_tumblrsnap/app/build/intermediates/pre-dexed/debug/classes-f5e0a0fa380e4eaaf8a3388a81d773c0cf6e0347.jar
