@@ -31,6 +31,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -44,16 +45,18 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 
 import eu.janmuller.android.simplecropimage.CropImage;
 
-public class PhotosFragment extends Fragment {
+public class PhotosFragment extends Fragment implements AdapterView.OnItemClickListener {
 	private static final int TAKE_PHOTO_CODE = 1;
 	private static final int PICK_PHOTO_CODE = 2;
 	private static final int CROP_PHOTO_CODE = 3;
 	private static final int POST_PHOTO_CODE = 4;
 
+    public static final int DIALOG_FRAGMENT = 1;
     public final String APP_TAG = "TumblrApp";
     private String photoFileName = "tmpTakenPhotoTumblr";
 	private Uri photoUri;
 	private Bitmap photoBitmap;
+    private ReblogDialogFragment rdfReblog;
 	
 	TumblrClient client;
 	ArrayList<Photo> photos;
@@ -78,6 +81,7 @@ public class PhotosFragment extends Fragment {
 		photosAdapter = new PhotosAdapter(getActivity(), photos);
 		lvPhotos = (ListView) getView().findViewById(R.id.lvPhotos);
 		lvPhotos.setAdapter(photosAdapter);
+        lvPhotos.setOnItemClickListener(this);
 	}
 	
 	@Override
@@ -195,6 +199,8 @@ public class PhotosFragment extends Fragment {
         cropIntent.putExtra(CropImage.SCALE, true);
         cropIntent.putExtra("aspectX", 1);
         cropIntent.putExtra("aspectY", 1);
+        cropIntent.putExtra("outputX", 300);
+        cropIntent.putExtra("outputY", 300);
 
 		startActivityForResult(cropIntent, CROP_PHOTO_CODE);
 	}
@@ -319,5 +325,11 @@ public class PhotosFragment extends Fragment {
         }
     }
 
-
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Photo photo = (Photo)lvPhotos.getAdapter().getItem(position);
+        rdfReblog = ReblogDialogFragment.newInstance(photo);
+        rdfReblog.setTargetFragment(this, DIALOG_FRAGMENT);
+        rdfReblog.show(getFragmentManager(), "reblog_fragment");
+    }
 }

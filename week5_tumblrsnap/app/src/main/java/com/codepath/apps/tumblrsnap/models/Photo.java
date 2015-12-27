@@ -1,14 +1,18 @@
 package com.codepath.apps.tumblrsnap.models;
 
+import android.util.Log;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Photo {
+public class Photo implements Serializable {
 	private String id;
 	private String blogName;
+    private String reblogKey;
 	private long timestamp;
 	private String caption;
 	private JSONArray tagsArray;
@@ -30,7 +34,11 @@ public class Photo {
 		return caption;
 	}
 
-	public boolean isSnap() {
+    public String getReblogKey() {
+        return reblogKey;
+    }
+
+    public boolean isSnap() {
 		boolean isSnap = false;
 		for (int i = 0; i < tagsArray.length(); i++) {
 			try {
@@ -93,12 +101,14 @@ public class Photo {
     public static Photo fromJson(JSONObject jsonObject) {
         Photo photo = new Photo();
         try {
+            Log.i("raw data", jsonObject.toString());
 			photo.id = jsonObject.getString("id");
 			photo.blogName = jsonObject.getString("blog_name");
 			photo.timestamp = jsonObject.getLong("timestamp");
 			photo.caption = jsonObject.getString("caption");
 			photo.photoArray = jsonObject.getJSONArray("photos");
 			photo.tagsArray = jsonObject.getJSONArray("tags");
+            photo.reblogKey = jsonObject.getString("reblog_key");
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

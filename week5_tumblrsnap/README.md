@@ -13,8 +13,8 @@ The following functionality is completed:
 * [v] User can take a picture, apply a filter, and upload that image to tumblr
   * [v] User can select a photo from camera roll, apply a filterand post
   * [v] User can select between multiple photo filters such as blur, grey, sepia
-* [ ] Theme and style the app for a pleasant UI and UX experience
-* [ ] Add the ability for users to comment on photos
+* [v] Theme and style the app for a pleasant UI and UX experience
+* [v] Add the ability for users to comment on photos
 * [v] Use a drop-down menu group from the ActionBar for logging out
 
 The following **additional** features are implemented:
@@ -25,7 +25,7 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+![demo](demo_android_week5_ydlin.gif)
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 

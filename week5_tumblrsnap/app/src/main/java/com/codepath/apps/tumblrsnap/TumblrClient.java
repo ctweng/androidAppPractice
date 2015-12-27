@@ -10,6 +10,7 @@ import org.scribe.builder.api.TumblrApi;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.codepath.oauth.OAuthBaseClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -31,6 +32,7 @@ public class TumblrClient extends OAuthBaseClient {
         RequestParams params = new RequestParams();
         params.put("tag", "cptumblrsnap");
         params.put("limit", "20");
+        params.put("reblog_info", "1");
         params.put("api_key", REST_CONSUMER_KEY);
         client.get(getApiUrl("tagged"), params, handler);
     }
@@ -51,7 +53,7 @@ public class TumblrClient extends OAuthBaseClient {
     	RequestParams params = new RequestParams();
     	params.put("type", "photo");
     	params.put("tags", "cptumblrsnap");
-    	try { 
+    	try {
 			params.put("data", file);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -71,4 +73,15 @@ public class TumblrClient extends OAuthBaseClient {
     	
     	client.post(getApiUrl(String.format("blog/%s/post?type=photo&tags=cptumblrsnap", blog)), params, handler);
     }
+
+    public void createReblogPost(String blog, String idToReblog, String reblogKey, String comment, final AsyncHttpResponseHandler handler) {
+        RequestParams params = new RequestParams();
+        params.put("id", idToReblog);
+        params.put("comment", comment);
+        params.put("reblog_key", reblogKey);
+        params.put("tags", "cptumblrsnap");
+        Log.i("params", params.toString() + "    url is " + getApiUrl(String.format("blog/%s/post/reblog", blog)));
+        client.post(getApiUrl(String.format("blog/%s/post/reblog", blog)), params, handler);
+    }
+
 }

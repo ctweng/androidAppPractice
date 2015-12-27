@@ -3,6 +3,7 @@ package com.codepath.apps.tumblrsnap;
 import java.util.List;
 
 import android.content.Context;
+import android.text.Html;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,6 +47,12 @@ public class PhotosAdapter extends ArrayAdapter<Photo> {
         ImageView ivPhoto = (ImageView) view.findViewById(R.id.ivPhoto);
         ivPhoto.setImageResource(android.R.color.transparent);
 
+        TextView tvCaption = (TextView) view.findViewById(R.id.tvCaption);
+        if (photo.getCaption().length() > 0) {
+            tvCaption.setText(Html.fromHtml(photo.getCaption()));
+        } else {
+            tvCaption.setText("");
+        }
         // Set the dimensions of the ImageView, so it will be resize immediately
         // before the photo
         // finishes downloading.

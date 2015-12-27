@@ -42,4 +42,13 @@
         android:layout_centerHorizontal="true"
         android:scaleType="center" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvCaption"
+        android:layout_below="@+id/ivPhoto"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
+        android:minHeight="0dp" />
+
 </RelativeLayout><!-- From: file:/Users/cyme/Desktop/andapp/androidAppPractice/week5_tumblrsnap/app/src/main/res/layout/photo_item.xml -->
