@@ -1,6 +1,7 @@
 package com.codepath.apps.tumblrsnap.fragments;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -40,6 +41,8 @@ import com.codepath.apps.tumblrsnap.TumblrClient;
 import com.codepath.apps.tumblrsnap.activities.PreviewPhotoActivity;
 import com.codepath.apps.tumblrsnap.models.Photo;
 import com.loopj.android.http.JsonHttpResponseHandler;
+
+import eu.janmuller.android.simplecropimage.CropImage;
 
 public class PhotosFragment extends Fragment {
 	private static final int TAKE_PHOTO_CODE = 1;
@@ -101,6 +104,7 @@ public class PhotosFragment extends Fragment {
 			case R.id.action_use_existing:
 			{
 				// Take the user to the gallery app
+                onPickPhoto();
 			}
 			break;
 		}
@@ -109,20 +113,27 @@ public class PhotosFragment extends Fragment {
 	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.i("2121221", "`````231231231221");
 		if (resultCode == Activity.RESULT_OK) {
 			if (requestCode == TAKE_PHOTO_CODE) {
-
-                // Call the method below to trigger the cropping
+                photoUri = getPhotoFileUri(photoFileName);
                 cropPhoto(photoUri);
 			} else if (requestCode == PICK_PHOTO_CODE) {
 				// Extract the photo that was just picked from the gallery
-				
-				// Call the method below to trigger the cropping
-				// cropPhoto(photoUri)
+                if (data != null) {
+                    Uri rawUri = data.getData();
+                    String photoUriString = getFileUri(rawUri);
+                    photoUri = Uri.parse(photoUriString);
+                    // Call the method below to trigger the cropping
+                    cropPhoto(photoUri);
+
+                }
 			} else if (requestCode == CROP_PHOTO_CODE) {
-                Log.i("2222", "``````````````````````````");
-				photoBitmap = data.getParcelableExtra("data");
+				//photoBitmap = data.getParcelableExtra("data");
+                String path = data.getStringExtra(CropImage.IMAGE_PATH);
+                if (path == null) {
+                    return;
+                }
+                photoBitmap = BitmapFactory.decodeFile(path);
 				startPreviewPhotoActivity();
 			} else if (requestCode == POST_PHOTO_CODE) {
 				reloadPhotos();
@@ -153,16 +164,18 @@ public class PhotosFragment extends Fragment {
 	
 	private void cropPhoto(Uri photoUri) {
         //call the standard crop action intent (the user device may not support it)
-        Intent cropIntent = new Intent("com.android.camera.action.CROP");
-        //cropIntent.setClassName("com.google.android.gallery3d", "com.android.gallery3d.app.CropImage");
-
+        Intent cropIntent = new Intent(getActivity(), CropImage.class);
+/*
         List<ResolveInfo> list = getContext().getPackageManager().queryIntentActivities(cropIntent, 0);
         int size = list.size();
         if (size == 0) {
             Toast.makeText(getContext(), "Can not find image crop app", Toast.LENGTH_SHORT).show();
+
+            startPreviewPhotoActivity();
             return;
         }
-
+*/
+        /*
         //indicate image type and Uri
 		cropIntent.setDataAndType(photoUri, "image/*");
 		//set crop properties
@@ -176,6 +189,13 @@ public class PhotosFragment extends Fragment {
 		//retrieve data on return
 		cropIntent.putExtra("return-data", true);
 		//start the activity - we handle returning in onActivityResult
+		*/
+        Log.i("image path", photoUri.getPath());
+        cropIntent.putExtra(CropImage.IMAGE_PATH, photoUri.getPath());
+        cropIntent.putExtra(CropImage.SCALE, true);
+        cropIntent.putExtra("aspectX", 1);
+        cropIntent.putExtra("aspectY", 1);
+
 		startActivityForResult(cropIntent, CROP_PHOTO_CODE);
 	}
 	
@@ -194,6 +214,7 @@ public class PhotosFragment extends Fragment {
 	private void startPreviewPhotoActivity() {
 		Intent i = new Intent(getActivity(), PreviewPhotoActivity.class);
         i.putExtra("photo_bitmap", photoBitmap);
+        i.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivityForResult(i, POST_PHOTO_CODE);
 	}
 	
@@ -282,5 +303,21 @@ public class PhotosFragment extends Fragment {
         }
         return false;
     }
+
+    // Methods for picking photos
+    // Trigger gallery selection for a photo
+    public void onPickPhoto() {
+        // Create intent for picking a photo from the gallery
+        Intent intent = new Intent(Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+        // If you call startActivityForResult() using an intent that no app can handle, your app will crash.
+        // So as long as the result is not null, it's safe to use the intent.
+        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+            // Bring up gallery to select a photo
+            startActivityForResult(intent, PICK_PHOTO_CODE);
+        }
+    }
+
 
 }

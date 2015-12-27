@@ -3,6 +3,7 @@ package com.codepath.apps.tumblrsnap.activities;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -34,6 +35,7 @@ public class PreviewPhotoActivity extends FragmentActivity {
 	private void redisplayPreview(int effectId) {
         processedBitmap = filterProcessor.applyFilter(effectId);
         ivPreview.setImageBitmap(processedBitmap);
+		Log.i("adsf", "22");
 	}
 
 

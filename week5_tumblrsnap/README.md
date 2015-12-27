@@ -9,10 +9,10 @@ Time spent: **X** hours spent in total
 The following functionality is completed:
 
 * [v] User can sign in using OAuth login flow
-* [ ] User can view global feed of photos created by any TumblrSnap client
-* [ ] User can take a picture, apply a filter, and upload that image to tumblr
-  * [ ] User can select a photo from camera roll, apply a filterand post
-  * [ ] User can select between multiple photo filters such as blur, grey, sepia
+* [v] User can view global feed of photos created by any TumblrSnap client
+* [v] User can take a picture, apply a filter, and upload that image to tumblr
+  * [v] User can select a photo from camera roll, apply a filterand post
+  * [v] User can select between multiple photo filters such as blur, grey, sepia
 * [ ] Theme and style the app for a pleasant UI and UX experience
 * [ ] Add the ability for users to comment on photos
 * [ ] Use a drop-down menu group from the ActionBar for logging out

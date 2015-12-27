@@ -21,5 +21,15 @@
     <string msgid="3421042268587513524" name="abc_shareactionprovider_share_with">"Sdílet pomocí"</string>
     <string msgid="7165123711973476752" name="abc_shareactionprovider_share_with_application">"Sdílet pomocí %s"</string>
     <string msgid="1603543279005712093" name="abc_toolbar_collapse_description">"Sbalit"</string>
+    <!-- From: file:/Users/cyme/Desktop/andapp/androidAppPractice/week5_tumblrsnap/app/build/intermediates/exploded-aar/week5_tumblrsnap/simple-crop-image-lib/unspecified/res/values-cs/values.xml -->
+    <eat-comment/>
+    <string name="cancel">Zrušit</string>
+    <string name="no_storage_card">Žádná SD karta</string>
+    <string name="not_enough_space">Na SD kartě není dostatek místa</string>
+    <string name="preparing_card">Připravuji kartu</string>
+    <string name="save">Uložit</string>
+    <string name="saving_image">Ukládám obrázek</string>
+    <!-- From: file:/Users/cyme/Desktop/andapp/androidAppPractice/week5_tumblrsnap/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.1.0/res/values-cs/values-cs.xml -->
+    <eat-comment/>
     <string msgid="2869576371154716097" name="status_bar_notification_info_overflow">"999+"</string>
 </resources>
