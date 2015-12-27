@@ -10,11 +10,13 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.codepath.apps.tumblrsnap.R;
+import com.codepath.apps.tumblrsnap.TumblrSnapApp;
 import com.codepath.apps.tumblrsnap.fragments.LoginFragment;
 import com.codepath.apps.tumblrsnap.fragments.LoginFragment.OnLoginHandler;
 import com.codepath.apps.tumblrsnap.fragments.PhotosFragment;
@@ -37,7 +39,7 @@ public class MainActivity extends FragmentActivity implements OnLoginHandler {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.settings, menu);
 
         MenuItem settings = menu.findItem(R.id.action_settings);
         if (User.currentUser() == null) {
@@ -50,8 +52,9 @@ public class MainActivity extends FragmentActivity implements OnLoginHandler {
     }
 
     public void onSettingsButton(MenuItem menuItem) {
-        Intent i = new Intent(this, SettingsActivity.class);
-        startActivity(i);
+        TumblrSnapApp.getClient().clearAccessToken();
+        User.setCurrentUser(null);
+        updateFragments();
     }
 
     @Override

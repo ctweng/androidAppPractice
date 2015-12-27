@@ -15,7 +15,7 @@ The following functionality is completed:
   * [v] User can select between multiple photo filters such as blur, grey, sepia
 * [ ] Theme and style the app for a pleasant UI and UX experience
 * [ ] Add the ability for users to comment on photos
-* [ ] Use a drop-down menu group from the ActionBar for logging out
+* [v] Use a drop-down menu group from the ActionBar for logging out
 
 The following **additional** features are implemented:
 

@@ -108,15 +108,9 @@ activity#eu.janmuller.android.simplecropimage.CropImage
 ADDED from AndroidManifest.xml:45:9
 	android:name
 		ADDED from AndroidManifest.xml:45:19
-activity#com.codepath.apps.tumblrsnap.activities.SettingsActivity
+activity#com.codepath.apps.tumblrsnap.activities.PreviewPhotoActivity
 ADDED from AndroidManifest.xml:46:9
 	android:label
 		ADDED from AndroidManifest.xml:48:13
 	android:name
-		ADDED from AndroidManifest.xml:47:13
-activity#com.codepath.apps.tumblrsnap.activities.PreviewPhotoActivity
-ADDED from AndroidManifest.xml:50:9
-	android:label
-		ADDED from AndroidManifest.xml:52:13
-	android:name
-		ADDED from AndroidManifest.xml:51:14
+		ADDED from AndroidManifest.xml:47:14
